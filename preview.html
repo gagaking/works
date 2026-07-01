@@ -22,8 +22,30 @@ tailwind.config = { theme: { extend: { fontFamily: { playfair: ['Playfair Displa
 @media(prefers-reduced-motion:reduce){.hero-anim,.hero-zoom{animation:none;opacity:1}}
 .skill-bar{transition:width 1.2s cubic-bezier(0.16,1,0.3,1)}
 .horizontal-scroll{display:flex;gap:1rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
+.horizontal-scroll > :first-child{width:360px!important}
 .horizontal-scroll::-webkit-scrollbar{display:none}
 .font-cn{font-family:'Noto Sans SC','Inter',sans-serif}.font-cn-serif{font-family:'Noto Serif SC','Playfair Display',serif}.horizontal-scroll>*{flex-shrink:0}
+
+.hero-carousel{position:absolute;bottom:100px;left:5%;width:90%;height:225px;z-index:40;overflow:hidden;pointer-events:auto}
+.hero-carousel-inner{display:flex;height:100%;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.hero-carousel-inner::-webkit-scrollbar{display:none}
+.hero-carousel-item{width:300px;height:225px;flex-shrink:0;overflow:hidden;position:relative;cursor:pointer;margin-right:8px}
+
+.hero-carousel-item img{width:100%;height:100%;object-fit:cover}
+
+
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-content{display:flex;max-width:1200px;width:100%;max-height:85vh;overflow:hidden;background:#111;animation:modalSlideIn 0.35s cubic-bezier(0.16,1,0.3,1)}
+@keyframes modalSlideIn{from{opacity:0;transform:scale(0.92) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-image{width:50%;min-height:500px;background-size:cover;background-position:center}
+.modal-text{width:50%;padding:40px 36px;display:flex;flex-direction:column;justify-content:center}
+.modal-text .tag{display:inline-block;width:fit-content;font-size:10px;font-weight:600;letter-spacing:0.12em;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);padding:5px 12px;border-radius:999px;margin-bottom:16px;text-transform:uppercase}
+.modal-text h2{color:#fff;font-size:28px;font-weight:600;letter-spacing:-0.02em;margin-bottom:10px}
+.modal-text p{color:rgba(255,255,255,0.55);font-size:14px;line-height:1.7}
+.modal-close{position:fixed;top:20px;right:24px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;z-index:210}
+.modal-close:hover{background:rgba(255,255,255,0.18)}
+@media(max-width:640px){.modal-content{flex-direction:column}.modal-image{width:100%;min-height:280px}.modal-text{width:100%;padding:32px 28px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
@@ -126,6 +148,7 @@ function App() {
   const rafRef = useRef(0);
   const [cursorPos, setCursorPos] = useState({ x: -999, y: -999 });
   const [scrolled, setScrolled] = useState(false);
+  const [modalItem, setModalItem] = useState(null);
 
   const animate = useCallback(() => {
     smooth.current.x += (mouse.current.x - smooth.current.x) * 0.1;
@@ -146,6 +169,10 @@ function App() {
     };
   }, [animate]);
   const scrollTo = (target) => { const el = document.getElementById(target); if (el) el.scrollIntoView({ behavior: "smooth" }); };
+  const openModal = (item) => { setModalItem(item); };
+  const closeModal = () => { setModalItem(null); };
+    // Carousel auto-scroll handled by standalone script below
+
 
   return (
     <div className="min-h-screen bg-white tracking-[-0.02em]" style={{ fontFamily: "'Inter','Noto Sans SC',sans-serif" }}>
@@ -175,33 +202,47 @@ function App() {
             <span className="block font-normal text-5xl sm:text-7xl md:text-8xl -mt-1 hero-anim hero-reveal" style={{ letterSpacing: "-0.08em", animationDelay: "0.42s" }}>{home.heroTitle2}</span>
           </h1>
         </div>
-        <div className="hidden sm:block absolute bottom-14 left-10 md:left-14 max-w-[260px] z-50 hero-anim hero-fade" style={{ animationDelay: "0.7s" }}>
-          <p className="text-sm text-white/80 leading-relaxed">{home.heroDescLeft}</p>
+      
+        <div className="hero-carousel">
+          <div id="heroCarousel" className="hero-carousel-inner">
+            <div className="hero-carousel-item"><img src="img/356a70775848962b6ccf4ccf12f3638e.jpg" alt="" /></div>
+            <div className="hero-carousel-item"><img src="img/6be329ff166d929f1f856fd6b1fbc269.jpg" alt="" /></div>
+            <div className="hero-carousel-item"><img src="img/d9f8b67a05ced236446eefe1e849d6a0.jpg" alt="" /></div>
+            <div className="hero-carousel-item"><img src="img/960bcf6809b996aded23ac0a19987813.jpg" alt="" /></div>
+            <div className="hero-carousel-item"><img src="img/d0463c7904b6b8f52c1ec2568c6119f0.jpg" alt="" /></div>
+            <div className="hero-carousel-item"><img src="img/patch-billboard-1-1920.avif" alt="" /></div>
+            <div className="hero-carousel-item"><img src="img/patch-billboard-4-1920.avif" alt="" /></div>
+            <div className="hero-carousel-item"><img src="img/patch-swatch-1407.avif" alt="" /></div>
+          </div>
         </div>
-        <div className="absolute bottom-10 sm:bottom-24 left-5 right-5 sm:left-auto sm:right-10 md:right-14 max-w-full sm:max-w-[260px] flex flex-col items-start gap-4 sm:gap-5 z-50 hero-anim hero-fade" style={{ animationDelay: "0.85s" }}>
-          <p className="text-xs sm:text-sm text-white/80 leading-relaxed">{home.heroDescRight}</p>
-          <button className="bg-[#e8702a] hover:bg-[#d2611f] text-white text-sm font-medium px-7 py-3 rounded-full transition-all hover:scale-[1.03] active:scale-95 hover:shadow-lg hover:shadow-[#e8702a]/30">{home.heroButtonText}</button>
+        </section>
+      <section className="w-full bg-black flex items-center justify-center" style={{ height: "auto", minHeight: "calc(50vh + 100px)", padding: "50px 0" }}>
+        <div className="w-full max-w-[1920px] mx-auto">
+          <div style={{position:"relative",overflow:"hidden"}}>
+          <img src="img/bg-3.png" alt="" className="w-full h-auto block" id="zoomTarget" style={{ maxHeight: "90vh", objectFit: "contain", display:"block" }} />
+          <div id="magLens" style={{display:"none",position:"absolute",width:"160px",height:"160px",borderRadius:"0",border:"2px solid rgba(255,255,255,0.2)",pointerEvents:"none",zIndex:10,backgroundRepeat:"no-repeat",boxShadow:"0 0 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,0,0,0.3)",overflow:"hidden"}}></div>
+        </div>
         </div>
       </section>
-
       <section id="ai-systems" className="bg-white px-6 sm:px-10 md:px-16 lg:px-20 py-20 sm:py-28">
         <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
           <div className="lg:w-[22%] flex-shrink-0">
-            <h2 className="text-gray-900 text-4xl sm:text-5xl md:text-6xl font-normal leading-[1.05] tracking-[-0.03em]">{home.sectionAiSystemsEn}<br /><span className="font-playfair italic text-gray-500">{home.sectionAiSystemsCn}</span></h2>
+            <h2 className="text-gray-900 text-4xl sm:text-5xl md:text-6xl font-normal leading-[1.05] tracking-[-0.03em]" style={{ marginTop: "clamp(40px, 6vw, 80px)" }}>{home.sectionAiSystemsEn}<br /><span className="font-playfair italic text-gray-500">{home.sectionAiSystemsCn}</span></h2>
           </div>
-          <div className="lg:w-[78%] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {aiWorks.map((w) => (
-              <div key={w.title} className="group relative rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{ aspectRatio: "3/4" }} >
-                <div className="absolute inset-0" style={{background: w.gradient}} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                <div className="absolute inset-0 flex flex-col justify-end p-5">
-                  <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 rounded-full mb-3">{w.tag}</span>
-                  <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">{w.title}</h3>
-                  <p className="text-white/60 text-xs leading-relaxed mb-3">{w.desc}</p>
-                  <div className="flex justify-end"><span className="text-white/30 group-hover:text-white/70 transition-colors"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
-                </div>
+                    <div className="w-full">
+            <div style={{position:"relative",width:"100%",height:"75vh",overflow:"hidden",cursor:"grab"}} id="aiGalleryWrap">
+              <div id="aiGalleryCanvas" style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:1}}></div>
+              <div id="aiGalleryScroll" style={{position:"absolute",inset:0,zIndex:2,display:"flex",alignItems:"flex-end",willChange:"transform"}}>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/356a70775848962b6ccf4ccf12f3638e.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/6be329ff166d929f1f856fd6b1fbc269.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/960bcf6809b996aded23ac0a19987813.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/d0463c7904b6b8f52c1ec2568c6119f0.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/d9f8b67a05ced236446eefe1e849d6a0.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/patch-billboard-1-1920.avif" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/patch-billboard-4-1920.avif" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/patch-swatch-1407.avif" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
@@ -212,14 +253,15 @@ function App() {
             <div className="lg:w-[22%] flex-shrink-0">
               <h2 className="text-gray-900 text-4xl sm:text-5xl md:text-6xl font-normal leading-[1.05] tracking-[-0.03em]">{home.sectionDesignWorksEn}<br /><span className="font-playfair italic text-gray-500">{home.sectionDesignWorksCn}</span></h2>
             </div>
-            <div className="lg:w-[78%]">
+                      
+            <div className="lg:w-[78%]" style={{marginTop:"35px"}}>
               <div className="horizontal-scroll pb-4">
                 {works.map((work) => (
-                  <div key={work.title} className="group relative rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{ width: "240px", height: "320px", flexShrink: 0 }}>
+                  <div key={work.title} className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{ width: "240px", height: "320px", flexShrink: 0 }}>
                     <div className="absolute inset-0" style={{background: work.gradient}} />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                     <div className="absolute inset-0 flex flex-col justify-end p-5">
-                      <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 rounded-full mb-3">{work.tag}</span>
+                      <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 mb-3">{work.tag}</span>
                       <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">{work.title}</h3>
                       <p className="text-white/60 text-xs leading-relaxed mb-3">{work.desc}</p>
                       <div className="flex justify-end"><span className="text-white/30 group-hover:text-white/70 transition-colors"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
@@ -240,13 +282,13 @@ function App() {
           </div>
           <div className="lg:w-[78%] grid grid-cols-1 sm:grid-cols-2 gap-4">
             {services.map((s) => (
-              <div key={s.title} className="group bg-gray-50 rounded-2xl border border-gray-100 p-6 sm:p-8 hover:border-gray-200 transition-all duration-300">
+              <div key={s.title} className="group bg-gray-50 border border-gray-100 p-6 sm:p-8 hover:border-gray-200 transition-all duration-300">
                 <h3 className="text-gray-900 text-lg font-semibold mb-1">{s.title}</h3>
                 <p className="text-gray-900/60 text-sm mb-3">{s.subtitle}</p>
                 <p className="text-gray-400 text-sm leading-relaxed mb-4">{s.desc}</p>
                 <div className="flex flex-wrap gap-2">
                   {s.tags.map((tag) => (
-                    <span key={tag} className="inline-block text-[10px] font-medium tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">{tag}</span>
+                    <span key={tag} className="inline-block text-[10px] font-medium tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1">{tag}</span>
                   ))}
                 </div>
               </div>
@@ -259,15 +301,15 @@ function App() {
       <section id="methodology" className="bg-white px-6 sm:px-10 md:px-16 lg:px-20 py-20 sm:py-28">
         <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
           <div className="lg:w-[22%] flex-shrink-0">
-            <div className="rounded-2xl p-6 sm:p-8 h-full min-h-[200px] flex flex-col justify-end" style={{ background: "linear-gradient(135deg, #7c3aed 0%, #a855f7 40%, #f472b6 100%)" }}>
+            <div className="p-6 sm:p-8 h-full min-h-[200px] flex flex-col justify-end" style={{ background: "linear-gradient(135deg, #7c3aed 0%, #a855f7 40%, #f472b6 100%)" }}>
               <h2 className="text-white text-3xl sm:text-4xl font-normal leading-[1.1] tracking-[-0.03em]">{home.sectionMethodologyEn}</h2>
               <p className="text-white/80 text-sm mt-2">{home.sectionMethodologyCn}</p>
             </div>
           </div>
           <div className="lg:w-[78%] grid grid-cols-1 sm:grid-cols-3 gap-4">
             {methodologyCards.map((card) => (
-              <div key={card.title} className="group bg-gray-50 rounded-2xl border border-gray-100 p-6 sm:p-8 hover:border-gray-200 transition-all duration-300 flex flex-col">
-                <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center mb-6">
+              <div key={card.title} className="group bg-gray-50 border border-gray-100 p-6 sm:p-8 hover:border-gray-200 transition-all duration-300 flex flex-col">
+                <div className="w-14 h-14 bg-indigo-50 flex items-center justify-center mb-6">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={card.iconPath}/></svg>
                 </div>
                 <h3 className="text-gray-900 text-base font-semibold leading-snug mb-2">{card.title}</h3>
@@ -284,7 +326,7 @@ function App() {
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
             <div className="lg:w-[22%] flex-shrink-0">
               <h2 className="text-gray-900 text-4xl sm:text-5xl md:text-6xl font-normal leading-[1.05] tracking-[-0.03em]">{home.sectionAboutEn}<br /><span className="font-playfair italic text-gray-500 text-3xl sm:text-4xl">{"\u5173\u4e8e\u6211"}</span></h2>
-              <div className="mt-6 w-full max-w-[280px] rounded-2xl overflow-hidden bg-gray-200" style={{ aspectRatio: "3/4" }}>
+              <div className="mt-6 w-full max-w-[280px] overflow-hidden bg-gray-200" style={{ aspectRatio: "3/4" }}>
                 <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
                   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </div>
@@ -304,13 +346,13 @@ function App() {
                           </div>
                           <span className="text-gray-900 text-sm font-semibold">{s.pct}%</span>
                         </div>
-                        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                          <div className="skill-bar h-full bg-indigo-500 rounded-full" style={{ width: s.pct + "%" }} />
+                        <div className="h-1.5 bg-gray-100 overflow-hidden">
+                          <div className="skill-bar h-full bg-indigo-500" style={{ width: s.pct + "%" }} />
                         </div>
                       </div>
                     ))}
                   </div>
-                  <div className="flex-1 bg-gray-50 rounded-2xl border border-gray-100 p-6 sm:p-8 flex flex-col justify-start">
+                  <div className="flex-1 bg-gray-50 border border-gray-100 p-6 sm:p-8 flex flex-col justify-start">
                     <p className="text-indigo-500 text-sm font-medium mb-1">Impact</p>
                     <p className="text-gray-900 text-lg font-semibold mb-6">{"\u6210\u679c\u4e0e\u5f71\u54cd"}</p>
                     <div className="grid grid-cols-2 gap-6">
@@ -336,7 +378,7 @@ function App() {
           </p>
           <div className="flex items-center gap-6">
             <span className="text-white/40 text-xs">{home.footerCopyright}</span>
-            <button className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium px-6 py-2.5 rounded-full transition-colors">
+            <button className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium px-6 py-2.5 transition-colors">
               {home.footerButtonText}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </button>
@@ -344,7 +386,22 @@ function App() {
         </div>
       </footer>
 
-            }
+            
+      {modalItem && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <button className="modal-close" onClick={closeModal}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+          </button>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-image" style={{background: modalItem.gradient + ", url(https://picsum.photos/seed/" + modalItem.title.toLowerCase().replace(/\s+/g, "") + "/600/500), #222"}} />
+            <div className="modal-text">
+              <span className="tag">{modalItem.tag}</span>
+              <h2>{modalItem.title}</h2>
+              <p>{modalItem.desc}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
@@ -352,6 +409,121 @@ function App() {
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
+
+<script>
+(function() {
+  var _el = null, _paused = false, _speed = 0.8;
+  function init() {
+    _el = document.getElementById("heroCarousel");
+    if (!_el || !_el.children || _el.children.length === 0) { setTimeout(init, 300); return; }
+    // Clone items for seamless infinite loop (all 300px base)
+    if (!_el.dataset.cloned) {
+      var cnt = _el.children.length;
+      for (var i = 0; i < cnt; i++) {
+        _el.appendChild(_el.children[i].cloneNode(true));
+      }
+      _el.dataset.cloned = "1";
+    }
+    // All items stay at 300px (CSS default)
+    _el.addEventListener("mouseenter", function() { _paused = true; });
+    _el.addEventListener("mouseleave", function() { _paused = false; });
+        // GSAP breakthrough hover effect
+    Array.from(_el.children).forEach(function(item) {
+      item.style.transformOrigin = "center center";
+      item.addEventListener("mouseenter", function() {
+        // Break out of container bounds and overlap neighbors
+        this.style.overflow = "visible";
+        this.style.zIndex = "10";
+        var carousel = document.querySelector(".hero-carousel");
+        var inner = document.getElementById("heroCarousel");
+        if (carousel) carousel.style.overflow = "visible";
+        if (inner) inner.style.overflow = "visible";
+        // Light burst overlay
+        var overlay = document.createElement("div");
+        overlay.style.cssText = "position:absolute;inset:0;background:radial-gradient(circle at center, rgba(255,255,255,0.35) 0%, transparent 70%);z-index:5;pointer-events:none;opacity:0;border-radius:inherit;";
+        this.appendChild(overlay);
+        var img = this.querySelector("img");
+        var labelSpan = this.querySelector(".label span");
+        var tl = gsap.timeline({ defaults: { ease: "power2.out" }, onComplete: function() { if (overlay.parentNode) overlay.remove(); } });
+        // Larger scale to break out - overlaps adjacent items
+        tl.to(this, { scale: 1.4, duration: 0.5, ease: "back.out(2.5)" }, 0);
+        tl.to(overlay, { opacity: 0.7, duration: 0.1 }, 0);
+        tl.to(overlay, { opacity: 0, duration: 0.35 }, 0.1);
+        if (img) tl.to(img, { scale: 1.08, duration: 0.55 }, 0.05);
+        if (labelSpan) {
+          gsap.set(labelSpan, { y: 24, opacity: 0, filter: "blur(6px)", willChange: "transform, opacity, filter" });
+          tl.to(labelSpan, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.4 }, 0.15);
+        }
+        // Outer glow shadow for depth
+        tl.to(this, { boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(96,165,250,0.3)", duration: 0.3 }, 0);
+      });
+      item.addEventListener("mouseleave", function() {
+        this.style.overflow = "";
+        this.style.zIndex = "";
+        var carousel = document.querySelector(".hero-carousel");
+        var inner = document.getElementById("heroCarousel");
+        if (carousel) carousel.style.overflow = "";
+        if (inner) inner.style.overflow = "";
+        gsap.to(this, { scale: 1, duration: 0.4, ease: "power2.inOut", boxShadow: "0 0 0 rgba(0,0,0,0)" });
+        var img = this.querySelector("img");
+        if (img) gsap.to(img, { scale: 1, duration: 0.4 });
+        var labelSpan = this.querySelector(".label span");
+        if (labelSpan) {
+          gsap.set(labelSpan, { clearProps: "y,opacity,filter,willChange" });
+        }
+      });
+      // Also reset parent overflow when non-hovered
+    });
+    // Click to view large image
+    Array.from(_el.children).forEach(function(item) {
+      item.addEventListener("click", function(e) {
+        var imgEl = this.querySelector("img");
+        if (!imgEl) return;
+        var src = imgEl.getAttribute("src");
+        var label = this.querySelector(".label span");
+        var text = label ? label.textContent : "";
+        // Create image lightbox overlay
+        var ov = document.createElement("div");
+        ov.style.cssText = "position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;cursor:pointer;animation:fadeIn 0.25s ease";
+        var ci = document.createElement("img");
+        ci.src = src;
+        ci.style.cssText = "max-width:85vw;max-height:80vh;object-fit:contain;box-shadow:0 30px 80px rgba(0,0,0,0.5);border-radius:0";
+        ov.appendChild(ci);
+        if (text) {
+          var lb = document.createElement("div");
+          lb.textContent = text;
+          lb.style.cssText = "position:absolute;bottom:30px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.6);font-size:12px;letter-spacing:0.1em;font-weight:500";
+          ov.appendChild(lb);
+        }
+        var cb = document.createElement("button");
+        cb.innerHTML = "&times;";
+        cb.style.cssText = "position:fixed;top:24px;right:28px;width:38px;height:38px;background:rgba(255,255,255,0.08);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10000;border-radius:0";
+        ov.appendChild(cb);
+        var closeFn = function() { ov.remove(); };
+        ov.onclick = closeFn;
+        cb.onclick = function(ev) { ev.stopPropagation(); ov.remove(); };
+        document.body.appendChild(ov);
+      });
+    });
+
+    setInterval(tick, 20);
+  }
+  function tick() {
+    if (!_el || _paused) return;
+    var hw = _el.scrollWidth - _el.clientWidth;
+    if (hw <= 0) return;
+    var half = hw / 2;
+    if (_el.scrollLeft >= half) { _el.scrollLeft = 0; }
+    else { _el.scrollLeft += _speed; }
+    // Update progress bar
+    var bar = document.getElementById("designWorksBar");
+    if (bar) { bar.style.width = ((_el.scrollLeft / hw) * 100) + "%"; }
+  }
+  if (document.readyState === "complete") { init(); }
+  else { window.addEventListener("load", init); }
+})()
+</script>
+
 
 <script>
 (function() {
@@ -364,7 +536,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
     // Clone items for seamless loop
     var count = _el.children.length;
     for (var i = 0; i < count; i++) {
-      _el.appendChild(_el.children[i].cloneNode(true));
+      var _node = _el.children[i].cloneNode(true);
+      if (i === 0) _node.style.width = '360px';
+      _el.appendChild(_node);
     }
     _el.addEventListener('mouseenter', function() { _paused = true; });
     _el.addEventListener('mouseleave', function() { _paused = false; });
@@ -372,18 +546,25 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   }
   function tick() {
     if (!_el || _paused) return;
-    var half = (_el.scrollWidth - _el.clientWidth) / 2;
+    var hw = _el.scrollWidth - _el.clientWidth;
+    if (hw <= 0) return;
+    var half = hw / 2;
     if (_el.scrollLeft >= half) {
       _el.scrollLeft = 0;
     } else {
       _el.scrollLeft += _speed;
     }
+    var bar = document.getElementById("designWorksBar");
+    if (bar) { bar.style.width = ((_el.scrollLeft / hw) * 100) + "%"; }
   }
   if (document.readyState === 'complete') { init(); }
   else { window.addEventListener('load', init); }
 })();
 </script>
 
+<script>
+/* Carousel scroll now managed by React useEffect */
+</script>
 
 <script>
 gsap.registerPlugin(ScrollTrigger);
@@ -429,5 +610,32 @@ gsap.registerPlugin(ScrollTrigger);
   }, 25);
 })();
 </script>
-</body>
+
+<script>
+(function() {
+  var img = document.getElementById("zoomTarget");
+  var lens = document.getElementById("magLens");
+  if (!img || !lens) return;
+  img.addEventListener("mousemove", function(e) {
+    var rect = this.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    if (x < 0 || y < 0 || x > rect.width || y > rect.height) { lens.style.display = "none"; return; }
+    lens.style.display = "block";
+    var size = 160, zoom = 3;
+    var lx = Math.max(0, Math.min(x - size / 2, rect.width - size));
+    var ly = Math.max(0, Math.min(y - size / 2, rect.height - size));
+    lens.style.left = lx + "px";
+    lens.style.top = ly + "px";
+    lens.style.backgroundImage = "url(" + this.src + ")";
+    lens.style.backgroundSize = (rect.width * zoom) + "px " + (rect.height * zoom) + "px";
+    lens.style.backgroundPosition = (-x * zoom + size / 2) + "px " + (-y * zoom + size / 2) + "px";
+    lens.style.borderColor = "rgba(255,255,255,0.35)";
+  });
+  img.addEventListener("mouseleave", function() { lens.style.display = "none"; });
+})();
+</script>
+
+
+
 </html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>作品集管理后台</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#4D7CFF;--purple:#8B5CF6;--bg:#f5f5f0;--card:#fff;--tx:#1a1a1a;--tx2:#666;--bdr:rgba(0,0,0,.08);--green:#22c55e;--red:#ef4444}
+body{font-family:'Inter','Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5;min-height:100vh}
+.header{background:#111;color:#fff;padding:20px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header h1{font-size:18px;font-weight:700;letter-spacing:-.5px}
+.header h1 span{color:var(--blue)}
+.header-actions{display:flex;gap:12px;align-items:center}
+.header-actions a{color:rgba(255,255,255,.5);font-size:12px;text-decoration:none;transition:.2s}
+.header-actions a:hover{color:#fff}
+.btn{padding:8px 20px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:.2s;font-family:inherit}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:#3d6cf0}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#16a34a}
+.btn-red{background:transparent;color:var(--red);border:1px solid rgba(239,68,68,.2)}.btn-red:hover{background:rgba(239,68,68,.06)}
+.btn-outline{background:transparent;color:var(--tx2);border:1px solid var(--bdr)}.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.toast{position:fixed;bottom:30px;right:30px;background:#111;color:#fff;padding:14px 24px;border-radius:10px;font-size:13px;font-weight:500;transform:translateY(80px);opacity:0;transition:.3s;z-index:999}
+.toast.show{transform:none;opacity:1}
+.container{max-width:960px;margin:0 auto;padding:30px 24px 80px}
+.section{background:var(--card);border-radius:14px;border:1px solid var(--bdr);margin-bottom:20px;overflow:hidden}
+.section-head{padding:18px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bdr);cursor:pointer;transition:.2s}
+.section-head:hover{background:rgba(77,124,255,.02)}
+.section-head h2{font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px}
+.section-head h2 .num{font-size:11px;color:var(--blue);font-weight:600;background:rgba(77,124,255,.08);padding:3px 8px;border-radius:4px}
+.section-head .arrow{transition:transform .3s;color:var(--tx2)}
+.section-head.open .arrow{transform:rotate(180deg)}
+.section-body{padding:0 24px;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.section-body.open{max-height:5000px;padding:20px 24px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--tx2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;padding:10px 14px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-family:inherit;color:var(--tx);background:#fafafa;transition:.2s}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(77,124,255,.08)}
+.field textarea{min-height:80px;resize:vertical}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.item-card{border:1px solid var(--bdr);border-radius:12px;padding:20px;margin-bottom:14px;position:relative;background:#fafafa;transition:.2s}
+.item-card:hover{border-color:rgba(77,124,255,.15)}
+.item-card .item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.item-card .item-title{font-size:13px;font-weight:700;color:var(--tx)}
+.item-card .item-num{font-size:11px;color:var(--tx2);font-weight:500}
+.item-remove{width:28px;height:28px;border-radius:6px;border:1px solid rgba(239,68,68,.15);background:transparent;color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;font-size:16px}
+.item-remove:hover{background:rgba(239,68,68,.06)}
+.add-btn{width:100%;padding:12px;border:2px dashed rgba(0,0,0,.1);border-radius:10px;background:transparent;color:var(--tx2);font-size:13px;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit}
+.add-btn:hover{border-color:var(--blue);color:var(--blue);background:rgba(77,124,255,.02)}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>作品集<span>管理后台</span></h1>
+  <div class="header-actions">
+    <a href="preview.html" target="_blank">预览页面 &#8594;</a>
+    <button class="btn btn-red" onclick="resetAll()">重置全部</button>
+    <button class="btn btn-green" onclick="saveAll()">保存全部</button>
+  </div>
+</div>
+<div class="container" id="app"></div>
+<div class="toast" id="toast"></div>
+<script>
+var STORAGE_KEY='portfolio_data';
+var DEFAULTS={
+HOME:{brandName:'Lithos',heroTitle1:'Layers hold',heroTitle2:'tales of time',heroDescLeft:'Every layer of sediment records a chapter of our planet, from ancient seabeds to drifting ash, layered across millions of years beneath us.',heroDescRight:'Our interactive maps let you peel back the crust to trace how stones, fossils, and deep time combine to shape the ground beneath your feet.',heroButtonText:'Start Digging',bgImage1:'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_195923_b0ba8ace-1d1d-4f2c-9a28-1ab84b330680.png&w=1280&q=85',bgImage2:'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_201152_bba90a12-bf12-459f-91f0-51f237dbaf3b.png&w=1280&q=85',sectionAiSystemsEn:'AI Systems',sectionAiSystemsCn:'AI Systems',sectionDesignWorksEn:'Design Works',sectionDesignWorksCn:'Crafted Experiences',sectionServicesEn:'Services',sectionServicesCn:'服务',sectionMethodologyEn:'Methodology',sectionMethodologyCn:'我的方法论',sectionAboutEn:'About Me',sectionAboutCn:'关于我',aboutBio:'专注于 AI 视觉与设计的融合，擅长将 AI 技术应用于商业设计场景，构建高效的视觉生产系统。拥有丰富的品牌视觉设计经验与 AI 工具开发经验，致力于用设计与技术创造更大价值。',footerTagline1:"Let's Build",footerTaglineHighlight:'Scalable',footerTagline2:' Creativity.',footerCopyright:'© 2024 All rights reserved.',footerButtonText:'Get In Touch'},
+NAV:[{label:'HOME',target:'hero'},{label:'AI SYSTEMS',target:'ai-systems'},{label:'DESIGN WORKS',target:'design-works'},{label:'SERVICES',target:'services'},{label:'METHODOLOGY',target:'methodology'},{label:'ABOUT',target:'about'}],
+SYS:[
+  {id:'01',title:'AI Batch Generation<br>System',zh:'AI 批量生成系统',vis:'batch',problem:'手动设计生产速度太慢，无法满足大规模电商活动对数千视觉素材的需求。',solution:'使用结构化提示词模板 + AI 模型的批量生成管线，以规模化方式生产一致的、符合品牌规范的视觉内容。',steps:['Input Templates','Prompt Generator','AI Model','Quality Gate','Output'],metrics:[{v:'10x',l:'效率提升'},{v:'5000+',l:'月产素材'},{v:'98%',l:'一致性'},{v:'60%',l:'成本降低'}]},
+  {id:'02',title:'AI Visual Asset<br>Library',zh:'AI 视觉素材库系统',vis:'library',problem:'生成的素材缺乏组织、版本控制和跨团队的语义搜索能力。',solution:'智能素材管理系统，支持自动标签、风格聚类和提示词-素材关联，实现即时检索。',steps:['Generate','Auto-Tag','Cluster','Index','Retrieve'],metrics:[{v:'10K+',l:'索引素材'},{v:'< 2s',l:'搜索时间'},{v:'95%',l:'标签准确率'},{v:'40%',l:'复用率'}]},
+  {id:'03',title:'Automation<br>Workflow',zh:'自动化工作流',vis:'workflow',problem:'设计到生产的交接是手动的、容易出错的，无法随需求增长而扩展。',solution:'端到端自动化：从需求输入、提示词工程、生成、质检到交付，全程无需人工瓶颈。',steps:['Brief Intake','Prompt Build','AI Generation','Auto QA','Delivery'],metrics:[{v:'0',l:'手动步骤'},{v:'24/7',l:'持续运行'},{v:'99.2%',l:'通过率'},{v:'3min',l:'平均周期'}]},
+  {id:'04',title:'AI Content<br>Production',zh:'AI 内容生产',vis:'content',problem:'多平台活动的内容制作需要不同的格式、风格和规格。',solution:'模块化内容系统：从单一创意简报出发，使用模板驱动的AI管线生成平台特定的变体。',steps:['Creative Brief','Template Select','Variation Engine','Format Adapt','Publish'],metrics:[{v:'8x',l:'产出规模'},{v:'6+',l:'平台覆盖'},{v:'100%',l:'品牌匹配'},{v:'2hr',l:'活动上线'}]}
+],
+WORKS:[
+  {title:'Clothing Brand Visual System',zh:'服装品牌视觉系统',cat:'Branding',role:'Lead Designer - Visual system, AI asset pipeline',desc:'为高端服装品牌打造完整视觉识别系统。',bg:'linear-gradient(135deg,#1a1a2e,#2d1b4e,#1a2a3e)',tagBg:'rgba(99,102,241,.15)',tagTx:'#818cf8'},
+  {title:'E-commerce Campaign Design',zh:'电商品牌视觉设计',cat:'E-Commerce',role:'Art Director - Campaign visuals, batch generation',desc:'主导电商品牌大促活动的全链路视觉设计。',bg:'linear-gradient(135deg,#f5f0e8,#e8e0d4)',tagBg:'rgba(0,0,0,.05)',tagTx:'#555',tx:'#1a1a1a'},
+  {title:'618 Promotion Visual Design',zh:'电商大促视觉设计',cat:'Campaign',role:'System Designer - Automated promo visual pipeline',desc:'设计并实施618大促的自动化视觉管线。',bg:'linear-gradient(135deg,#2a0845,#6441A5,#8B5CF6)',tagBg:'rgba(255,255,255,.12)',tagTx:'#fff'},
+  {title:'Product Detail Page Design',zh:'产品详情页设计',cat:'UI/UX',role:'Designer - Template system + AI image generation',desc:'构建模块化详情页模板系统。',bg:'linear-gradient(135deg,#f8f6f2,#ede8e0)',tagBg:'rgba(0,0,0,.05)',tagTx:'#666',tx:'#1a1a1a'},
+  {title:'Brand Identity System',zh:'品牌形象系统',cat:'Identity',role:'Brand Designer - Full identity + AI asset system',desc:'从零构建品牌完整视觉识别体系。',bg:'linear-gradient(135deg,#0a1628,#1a2a4e,#0a2040)',tagBg:'rgba(99,102,241,.12)',tagTx:'#818cf8'}
+],
+SERVICES:[
+  {icon:'brand',en:'Brand Identity',zh:'品牌形象设计',desc:'从品牌战略到视觉落地，构建完整的品牌识别体系。',tags:['Logo Design','Visual System','Brand Guidelines','AI Assets']},
+  {icon:'ai',en:'AI Visual System',zh:'AI 视觉系统',desc:'设计并部署AI驱动的视觉生产管线。',tags:['Prompt Engineering','Batch Generation','Quality Control','Automation']},
+  {icon:'ecom',en:'E-commerce Design',zh:'电商设计',desc:'高转化率的电商视觉解决方案。',tags:['Product Pages','Campaign Visuals','Promotion Design','A/B Testing']},
+  {icon:'content',en:'Content Production',zh:'内容生产',desc:'多平台内容的系统化生产。',tags:['Social Media','Multi-platform','Template System','Batch Output']}
+],
+METH:[
+  {icon:'grid',en:'Prompt =<br>Structured Control Language',zh:'提示词是结构化的控制语言',desc:'提供高质量且始终如一的视觉、可控、可复用的视觉输出。',detail:'通过定义精确的参数化提示词结构，将创意意图转化为可复用的控制指令。'},
+  {icon:'target',en:'AI Design =<br>System Design',zh:'AI 设计是系统设计',desc:'为系统提取能力提炼、模型拟合、模型拟合和构架搭建。',detail:'将AI设计视为一个完整的系统工程，每个环节都需要系统化的思考与设计。'},
+  {icon:'layers',en:'Good Design =<br>Scalable & Reusable',zh:'好设计是可扩展与可复用的',desc:'提供共用的能快速构建、迭代、提取提供更精确的数据。',detail:'优秀的设计应当具备可扩展性和可复用性，通过组件化、模板化的方式，让设计资产在不同场景中快速适配和复用。'}
+],
+SKILLS:[{en:'Prompt Engineering',zh:'提示词工程',pct:90},{en:'Visual Design',zh:'视觉设计',pct:85},{en:'Automation',zh:'自动化',pct:90},{en:'System Thinking',zh:'系统思维',pct:88}],
+STATS:[{num:'10X+',l:'效率提升'},{num:'2000W+',l:'年销售额支持'},{num:'10000+',l:'生成素材'},{num:'98%+',l:'一致性控制'}]
+};
+function load(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||JSON.parse(JSON.stringify(DEFAULTS))}catch(e){return JSON.parse(JSON.stringify(DEFAULTS))}}
+var data=load();
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2200)}
+function saveAll(){localStorage.setItem(STORAGE_KEY,JSON.stringify(data));toast('已保存，刷新 preview 页面即可生效')}
+function resetAll(){if(!confirm('确定要重置所有数据为默认值吗？'))return;localStorage.removeItem(STORAGE_KEY);data=JSON.parse(JSON.stringify(DEFAULTS));render();toast('已重置为默认数据')}
+function render(){
+  var a=document.getElementById('app');
+  a.innerHTML=sec('首页内容','HOME',rHome)+sec('导航','NAV',rNav)+sec('AI 系统','SYS',rSys)+sec('设计作品','WORKS',rWork)+sec('服务','SERVICES',rSvc)+sec('方法论','METH',rMeth)+sec('技能','SKILLS',rSkill)+sec('成果数据','STATS',rStat);
+  document.querySelectorAll('.section-head').forEach(function(h){h.addEventListener('click',function(){h.classList.toggle('open');h.nextElementSibling.classList.toggle('open')})});
+  var f=document.querySelector('.section-head');if(f){f.classList.add('open');f.nextElementSibling.classList.add('open')}
+}
+function sec(label,key,fn){return'<div class="section"><div class="section-head"><h2><span class="num">'+key+'</span>'+label+'</h2><span class="arrow">&#9660;</span></div><div class="section-body">'+fn(key)+'</div></div>'}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function addItem(k,item){data[k].push(item);render();toast('已添加')}
+function removeItem(k,i){if(!confirm('确定删除此项？'))return;data[k].splice(i,1);render();toast('已删除')}
+function rSys(k){
+  var h='';
+  data[k].forEach(function(s,i){
+    h+='<div class="item-card"><div class="item-header"><span class="item-num">'+s.id+'</span><button class="item-remove" onclick="removeItem(\''+k+'\','+i+')">&#10005;</button></div>';
+    h+='<div class="field-row"><div class="field"><label>英文标题 (支持 &lt;br&gt;)</label><input value="'+esc(s.title)+'" onchange="data[\''+k+'\']['+i+'].title=this.value"></div>';
+    h+='<div class="field"><label>中文标题</label><input value="'+esc(s.zh)+'" onchange="data[\''+k+'\']['+i+'].zh=this.value"></div></div>';
+    h+='<div class="field"><label>vis 类型 (batch/library/workflow/content)</label><input value="'+esc(s.vis)+'" onchange="data[\''+k+'\']['+i+'].vis=this.value"></div>';
+    h+='<div class="field"><label>问题描述</label><textarea onchange="data[\''+k+'\']['+i+'].problem=this.value">'+esc(s.problem)+'</textarea></div>';
+    h+='<div class="field"><label>解决方案</label><textarea onchange="data[\''+k+'\']['+i+'].solution=this.value">'+esc(s.solution)+'</textarea></div>';
+    h+='<div class="field"><label>工作流程 (逗号分隔)</label><input value="'+esc(s.steps.join(', '))+'" onchange="data[\''+k+'\']['+i+'].steps=this.value.split(\',\').map(function(x){return x.trim()})"></div>';
+    h+='<div class="field"><label>指标 (每行: 值|标签)</label><textarea onchange="data[\''+k+'\']['+i+'].metrics=this.value.split(\'\\n\').filter(function(x){return x}).map(function(x){var p=l=x.split(\'|\');return{v:p[0].trim(),l:(l[1]||\'\').trim()}})">'+s.metrics.map(function(m){return m.v+'|'+m.l}).join('\n')+'</textarea></div></div>';
+  });
+  h+='<button class="add-btn" onclick="addItem(\''+k+'\',{id:\'0'+(data[k].length+1)+'\',title:\'New System<br>System\',zh:\'新系统\',vis:\'batch\',problem:\'描述问题\',solution:\'描述解决方案\',steps:[\'Step 1\',\'Step 2\',\'Step 3\'],metrics:[{v:\'0\',l:\'指标\'},{v:\'0\',l:\'指标\'},{v:\'0\',l:\'指标\'},{v:\'0\',l:\'指标\'}]})">+ 添加 AI 系统</button>';
+  return h;
+}
+function rWork(k){
+  var h='';
+  data[k].forEach(function(w,i){
+    h+='<div class="item-card"><div class="item-header"><span class="item-num">#'+(i+1)+'</span><button class="item-remove" onclick="removeItem(\''+k+'\','+i+')">&#10005;</button></div>';
+    h+='<div class="field-row"><div class="field"><label>英文标题</label><input value="'+esc(w.title)+'" onchange="data[\''+k+'\']['+i+'].title=this.value"></div>';
+    h+='<div class="field"><label>中文标题</label><input value="'+esc(w.zh)+'" onchange="data[\''+k+'\']['+i+'].zh=this.value"></div></div>';
+    h+='<div class="field-row"><div class="field"><label>分类</label><input value="'+esc(w.cat)+'" onchange="data[\''+k+'\']['+i+'].cat=this.value"></div>';
+    h+='<div class="field"><label>角色描述</label><input value="'+esc(w.role)+'" onchange="data[\''+k+'\']['+i+'].role=this.value"></div></div>';
+    h+='<div class="field"><label>项目描述</label><textarea onchange="data[\''+k+'\']['+i+'].desc=this.value">'+esc(w.desc)+'</textarea></div>';
+    h+='<div class="field"><label>背景渐变 (CSS background)</label><input value="'+esc(w.bg)+'" onchange="data[\''+k+'\']['+i+'].bg=this.value"></div></div>';
+  });
+  h+='<button class="add-btn" onclick="addItem(\''+k+'\',{title:\'New Project\',zh:\'新项目\',cat:\'Branding\',role:\'Designer - Role description\',desc:\'项目描述\',bg:\'linear-gradient(135deg,#333,#555)\',tagBg:\'rgba(255,255,255,.12)\',tagTx:\'#fff\'})">+ 添加设计作品</button>';
+  return h;
+}
+function rSvc(k){
+  var h='';
+  data[k].forEach(function(s,i){
+    h+='<div class="item-card"><div class="item-header"><span class="item-num">#'+(i+1)+'</span><button class="item-remove" onclick="removeItem(\''+k+'\','+i+')">&#10005;</button></div>';
+    h+='<div class="field-row"><div class="field"><label>英文标题</label><input value="'+esc(s.en)+'" onchange="data[\''+k+'\']['+i+'].en=this.value"></div>';
+    h+='<div class="field"><label>中文标题</label><input value="'+esc(s.zh)+'" onchange="data[\''+k+'\']['+i+'].zh=this.value"></div></div>';
+    h+='<div class="field"><label>描述</label><textarea onchange="data[\''+k+'\']['+i+'].desc=this.value">'+esc(s.desc)+'</textarea></div>';
+    h+='<div class="field"><label>标签 (逗号分隔)</label><input value="'+esc(s.tags.join(', '))+'" onchange="data[\''+k+'\']['+i+'].tags=this.value.split(\',\').map(function(x){return x.trim()})"></div></div>';
+  });
+  h+='<button class="add-btn" onclick="addItem(\''+k+'\',{icon:\'brand\',en:\'New Service\',zh:\'新服务\',desc:\'服务描述\',tags:[\'Tag 1\',\'Tag 2\']})">+ 添加服务</button>';
+  return h;
+}
+function rMeth(k){
+  var h='';
+  data[k].forEach(function(m,i){
+    h+='<div class="item-card"><div class="item-header"><span class="item-num">#'+(i+1)+'</span><button class="item-remove" onclick="removeItem(\''+k+'\','+i+')">&#10005;</button></div>';
+    h+='<div class="field-row"><div class="field"><label>英文标题 (支持 &lt;br&gt;)</label><input value="'+esc(m.en)+'" onchange="data[\''+k+'\']['+i+'].en=this.value"></div>';
+    h+='<div class="field"><label>中文标题</label><input value="'+esc(m.zh)+'" onchange="data[\''+k+'\']['+i+'].zh=this.value"></div></div>';
+    h+='<div class="field"><label>图标 (grid/target/layers)</label><input value="'+esc(m.icon)+'" onchange="data[\''+k+'\']['+i+'].icon=this.value"></div>';
+    h+='<div class="field"><label>描述</label><textarea onchange="data[\''+k+'\']['+i+'].desc=this.value">'+esc(m.desc)+'</textarea></div>';
+    h+='<div class="field"><label>详细说明</label><textarea onchange="data[\''+k+'\']['+i+'].detail=this.value">'+esc(m.detail||'')+'</textarea></div></div>';
+  });
+  h+='<button class="add-btn" onclick="addItem(\''+k+'\',{icon:\'grid\',en:\'New Method<br>Method\',zh:\'新方法论\',desc:\'描述\',detail:\'详细说明\'})">+ 添加方法论</button>';
+  return h;
+}
+function rSkill(k){
+  var h='';
+  data[k].forEach(function(s,i){
+    h+='<div class="item-card"><div class="item-header"><span class="item-num">#'+(i+1)+'</span><button class="item-remove" onclick="removeItem(\''+k+'\','+i+')">&#10005;</button></div>';
+    h+='<div class="field-row"><div class="field"><label>英文名称</label><input value="'+esc(s.en)+'" onchange="data[\''+k+'\']['+i+'].en=this.value"></div>';
+    h+='<div class="field"><label>中文名称</label><input value="'+esc(s.zh)+'" onchange="data[\''+k+'\']['+i+'].zh=this.value"></div></div>';
+    h+='<div class="field"><label>百分比</label><input type="number" min="0" max="100" value="'+s.pct+'" onchange="data[\''+k+'\']['+i+'].pct=+this.value"></div></div>';
+  });
+  h+='<button class="add-btn" onclick="addItem(\''+k+'\',{en:\'New Skill\',zh:\'新技能\',pct:80})">+ 添加技能</button>';
+  return h;
+}
+function rStat(k){
+  var h='';
+  data[k].forEach(function(s,i){
+    h+='<div class="item-card"><div class="item-header"><span class="item-num">#'+(i+1)+'</span><button class="item-remove" onclick="removeItem(\''+k+'\','+i+')">&#10005;</button></div>';
+    h+='<div class="field-row"><div class="field"><label>数值</label><input value="'+esc(s.num)+'" onchange="data[\''+k+'\']['+i+'].num=this.value"></div>';
+    h+='<div class="field"><label>标签</label><input value="'+esc(s.l)+'" onchange="data[\''+k+'\']['+i+'].l=this.value"></div></div></div>';
+  });
+  h+='<button class="add-btn" onclick="addItem(\''+k+'\',{num:\'0\',l:\'新指标\'})">+ 添加成果数据</button>';
+  return h;
+}
+function rHome(k){
+  var d=data[k];
+  var h='';
+  h+='<div class="item-card"><div class="item-header"><span class="item-title">Hero \u533a\u57df</span></div>';
+  h+='<div class="field"><label>\u54c1\u724c\u540d\u79f0</label><input value="'+esc(d.brandName)+'" onchange="data[\''+k+'\'].brandName=this.value"></div>';
+  h+='<div class="field-row"><div class="field"><label>\u6807\u9898\u7b2c\u4e00\u884c (\u659c\u4f53)</label><input value="'+esc(d.heroTitle1)+'" onchange="data[\''+k+'\'].heroTitle1=this.value"></div>';
+  h+='<div class="field"><label>\u6807\u9898\u7b2c\u4e8c\u884c</label><input value="'+esc(d.heroTitle2)+'" onchange="data[\''+k+'\'].heroTitle2=this.value"></div></div>';
+  h+='<div class="field"><label>\u5de6\u4fa7\u63cf\u8ff0</label><textarea onchange="data[\''+k+'\'].heroDescLeft=this.value">'+esc(d.heroDescLeft)+'</textarea></div>';
+  h+='<div class="field"><label>\u53f3\u4fa7\u63cf\u8ff0</label><textarea onchange="data[\''+k+'\'].heroDescRight=this.value">'+esc(d.heroDescRight)+'</textarea></div>';
+  h+='<div class="field"><label>\u6309\u94ae\u6587\u5b57</label><input value="'+esc(d.heroButtonText)+'" onchange="data[\''+k+'\'].heroButtonText=this.value"></div>';
+  h+='<div class="field"><label>\u80cc\u666f\u56fe1 URL</label><input value="'+esc(d.bgImage1)+'" onchange="data[\''+k+'\'].bgImage1=this.value"></div>';
+  h+='<div class="field"><label>\u80cc\u666f\u56fe2 URL</label><input value="'+esc(d.bgImage2)+'" onchange="data[\''+k+'\'].bgImage2=this.value"></div></div>';
+  h+='<div class="item-card"><div class="item-header"><span class="item-title">\u5404\u533a\u5757\u6807\u9898</span></div>';
+  h+='<div class="field-row"><div class="field"><label>AI Systems \u6807\u9898</label><input value="'+esc(d.sectionAiSystemsEn)+'" onchange="data[\''+k+'\'].sectionAiSystemsEn=this.value"></div>';
+  h+='<div class="field"><label>AI Systems \u526f\u6807\u9898</label><input value="'+esc(d.sectionAiSystemsCn)+'" onchange="data[\''+k+'\'].sectionAiSystemsCn=this.value"></div></div>';
+  h+='<div class="field-row"><div class="field"><label>Design Works \u6807\u9898</label><input value="'+esc(d.sectionDesignWorksEn)+'" onchange="data[\''+k+'\'].sectionDesignWorksEn=this.value"></div>';
+  h+='<div class="field"><label>Design Works \u526f\u6807\u9898</label><input value="'+esc(d.sectionDesignWorksCn)+'" onchange="data[\''+k+'\'].sectionDesignWorksCn=this.value"></div></div>';
+  h+='<div class="field-row"><div class="field"><label>Services \u6807\u9898</label><input value="'+esc(d.sectionServicesEn)+'" onchange="data[\''+k+'\'].sectionServicesEn=this.value"></div>';
+  h+='<div class="field"><label>Services \u526f\u6807\u9898</label><input value="'+esc(d.sectionServicesCn)+'" onchange="data[\''+k+'\'].sectionServicesCn=this.value"></div></div>';
+  h+='<div class="field-row"><div class="field"><label>Methodology \u6807\u9898</label><input value="'+esc(d.sectionMethodologyEn)+'" onchange="data[\''+k+'\'].sectionMethodologyEn=this.value"></div>';
+  h+='<div class="field"><label>Methodology \u526f\u6807\u9898</label><input value="'+esc(d.sectionMethodologyCn)+'" onchange="data[\''+k+'\'].sectionMethodologyCn=this.value"></div></div>';
+  h+='<div class="field-row"><div class="field"><label>About \u6807\u9898</label><input value="'+esc(d.sectionAboutEn)+'" onchange="data[\''+k+'\'].sectionAboutEn=this.value"></div>';
+  h+='<div class="field"><label>About \u526f\u6807\u9898</label><input value="'+esc(d.sectionAboutCn)+'" onchange="data[\''+k+'\'].sectionAboutCn=this.value"></div></div></div>';
+  h+='<div class="item-card"><div class="item-header"><span class="item-title">\u5173\u4e8e\u6211</span></div>';
+  h+='<div class="field"><label>\u4e2a\u4eba\u7b80\u4ecb</label><textarea onchange="data[\''+k+'\'].aboutBio=this.value">'+esc(d.aboutBio)+'</textarea></div></div>';
+  h+='<div class="item-card"><div class="item-header"><span class="item-title">\u9875\u811a</span></div>';
+  h+='<div class="field-row"><div class="field"><label>\u6807\u8bed\u7b2c\u4e00\u6bb5</label><input value="'+esc(d.footerTagline1)+'" onchange="data[\''+k+'\'].footerTagline1=this.value"></div>';
+  h+='<div class="field"><label>\u6807\u8bed\u9ad8\u4eae\u8bcd</label><input value="'+esc(d.footerTaglineHighlight)+'" onchange="data[\''+k+'\'].footerTaglineHighlight=this.value"></div></div>';
+  h+='<div class="field-row"><div class="field"><label>\u6807\u8bed\u7b2c\u4e8c\u6bb5</label><input value="'+esc(d.footerTagline2)+'" onchange="data[\''+k+'\'].footerTagline2=this.value"></div>';
+  h+='<div class="field"><label>\u7248\u6743\u6587\u5b57</label><input value="'+esc(d.footerCopyright)+'" onchange="data[\''+k+'\'].footerCopyright=this.value"></div></div>';
+  h+='<div class="field"><label>\u6309\u94ae\u6587\u5b57</label><input value="'+esc(d.footerButtonText)+'" onchange="data[\''+k+'\'].footerButtonText=this.value"></div></div>';
+  return h;
+}
+function rNav(k){
+  var h='';
+  data[k].forEach(function(item,i){
+    h+='<div class="item-card"><div class="item-header"><span class="item-num">#'+(i+1)+'</span><button class="item-remove" onclick="removeItem(\''+k+'\','+i+')">&#10005;</button></div>';
+    h+='<div class="field-row"><div class="field"><label>\u6807\u7b7e</label><input value="'+esc(item.label)+'" onchange="data[\''+k+'\']['+i+'].label=this.value"></div>';
+    h+='<div class="field"><label>\u76ee\u6807ID</label><input value="'+esc(item.target)+'" onchange="data[\''+k+'\']['+i+'].target=this.value"></div></div></div>';
+  });
+  h+='<button class="add-btn" onclick="addItem(\''+k+'\',{label:\'NEW\',target:\'section-id\'})">+ \u6dfb\u52a0\u5bfc\u822a\u9879</button>';
+  return h;
+}
+render();
+</script>
+</body>
+</html>

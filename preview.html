@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lithos - Layers Hold Tales of Time</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,500;1,600&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: { fontFamily: { playfair: ['Playfair Display', 'serif'] } } } }
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Noto Sans SC',sans-serif}
+.font-playfair{font-family:'Playfair Display','Noto Serif SC',serif}
+@keyframes heroReveal{0%{opacity:0;transform:translateY(28px);filter:blur(12px)}100%{opacity:1;transform:translateY(0);filter:blur(0)}}
+@keyframes heroFadeUp{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes heroZoom{0%{transform:scale(1.12)}100%{transform:scale(1)}}
+.hero-anim{opacity:0;animation-fill-mode:forwards;animation-timing-function:cubic-bezier(0.16,1,0.3,1)}
+.hero-reveal{animation-name:heroReveal;animation-duration:1.1s}
+.hero-fade{animation-name:heroFadeUp;animation-duration:1s}
+.hero-zoom{animation:heroZoom 1.8s cubic-bezier(0.16,1,0.3,1) forwards}
+@media(prefers-reduced-motion:reduce){.hero-anim,.hero-zoom{animation:none;opacity:1}}
+.skill-bar{transition:width 1.2s cubic-bezier(0.16,1,0.3,1)}
+.horizontal-scroll{display:flex;gap:1rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
+.horizontal-scroll::-webkit-scrollbar{display:none}
+.font-cn{font-family:'Noto Sans SC','Inter',sans-serif}.font-cn-serif{font-family:'Noto Serif SC','Playfair Display',serif}.horizontal-scroll>*{flex-shrink:0}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+</head>
+<body>
+<div id="loadingOverlay" style="position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.6s ease,visibility 0.6s ease">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:32px">
+    <svg width="40" height="40" viewBox="0 0 256 256" fill="#fff"><path d="M256 256H128L0 128h128Z"/><path d="M256 128H128L0 0h128Z"/></svg>
+    <span style="color:#fff;font-size:28px;font-family:&quot;Playfair Display&quot;,serif;font-style:italic;letter-spacing:-0.03em">Lithos</span>
+  </div>
+  <div style="width:192px;height:2px;background:rgba(255,255,255,0.1);border-radius:999px;overflow:hidden">
+    <div id="loadingBar" style="height:100%;background:#fff;width:0%;border-radius:999px"></div>
+  </div>
+  <span id="loadingPct" style="margin-top:12px;color:rgba(255,255,255,0.4);font-size:12px;font-family:monospace;letter-spacing:2px">0%</span>
+</div>
+
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.4/babel.min.js"></script>
+<script type="text/babel" data-type="module">
+const { useState, useEffect, useRef, useCallback } = React;
+
+
+
+const SPOTLIGHT_R = 260;
+
+
+
+var _SK = 'portfolio_data';
+var _VG = {batch:"linear-gradient(to bottom right,#3730a3,#4f46e5,#60a5fa)",library:"linear-gradient(to bottom right,#5b21b6,#9333ea,#e879f9)",workflow:"linear-gradient(to bottom right,#1e293b,#4338ca,#a855f7)",content:"linear-gradient(to bottom right,#1e3a5f,#2563eb,#22d3ee)"};
+var _IM = {grid:"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM12 2v20",target:"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM2 12h20",layers:"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"};
+function _lpd(){try{var r=localStorage.getItem(_SK);if(!r)return null;var d=JSON.parse(r);if(!d||!Object.keys(d).length)return null;return{home:d.HOME||null,nav:(d.NAV||[]).map(function(n){return{label:n.label,target:n.target}}),aiWorks:(d.SYS||[]).map(function(s){return{tag:s.zh||"",title:(s.title||"").replace(/<br>/g," "),desc:s.solution||"",gradient:_VG[s.vis]||_VG.batch}}),works:(d.WORKS||[]).map(function(w){return{tag:w.cat||"",title:w.title||"",desc:w.desc||"",gradient:w.bg||"linear-gradient(to bottom right,#333,#555,#777)"}}),methodologyCards:(d.METH||[]).map(function(m){return{title:(m.en||"").replace(/<br>/g," "),subtitle:m.zh||"",desc:m.detail||m.desc||"",iconPath:_IM[m.icon]||_IM.grid}}),skills:(d.SKILLS||[]).map(function(s){return{name:s.en||"",cn:s.zh||"",pct:s.pct||0}}),impacts:(d.STATS||[]).map(function(s){return{value:s.num||"",label:s.l||""}}),services:(d.SERVICES||[]).map(function(s){return{title:s.en||"",subtitle:s.zh||"",desc:s.desc||"",tags:s.tags||[]}})}}catch(e){return null}}
+var _d={aiWorks:[{tag:"AI + VISUAL",title:"PROMPT STUDIO",desc:"AI-powered prompt testing environment.",gradient:"linear-gradient(to bottom right,#3730a3,#4f46e5,#60a5fa)"},{tag:"AI + SYSTEM",title:"AUTO PIPELINE",desc:"End-to-end automated content generation system.",gradient:"linear-gradient(to bottom right,#5b21b6,#9333ea,#e879f9)"},{tag:"AI + BRAND",title:"NEURAL CANVAS",desc:"AI-assisted brand asset generation platform.",gradient:"linear-gradient(to bottom right,#1e293b,#4338ca,#a855f7)"},{tag:"AI + DATA",title:"VISION LAB",desc:"Visual data analysis powered by AI models.",gradient:"linear-gradient(to bottom right,#1e3a5f,#2563eb,#22d3ee)"}],works:[{tag:"AI + VISUAL",title:"ECHO GENERATIVE",desc:"AI-driven visual system for generative art exploration.",gradient:"linear-gradient(to bottom right,#581c87,#7e22ce,#a855f7)"},{tag:"BRAND + WEB",title:"NEXUS STUDIO",desc:"Digital identity and website design for a creative agency.",gradient:"linear-gradient(to bottom right,#1e293b,#475569,#94a3b8)"},{tag:"AI + PRODUCT",title:"FLOW AI",desc:"AI productivity platform with intelligent automation.",gradient:"linear-gradient(to bottom right,#1e1b4b,#5b21b6,#9333ea)"},{tag:"MOTION + 3D",title:"BEYOND REALMS",desc:"Immersive motion story told through 3D and sound.",gradient:"linear-gradient(to bottom right,#86198f,#c026d3,#f472b6)"},{tag:"WEB + UX",title:"PRISM DESIGN",desc:"Modern design system for cross-platform applications.",gradient:"linear-gradient(to bottom right,#115e59,#059669,#4ade80)"},{tag:"BRAND + IDENTITY",title:"AURORA BRAND",desc:"Complete visual identity for a tech startup.",gradient:"linear-gradient(to bottom right,#9f1239,#db2777,#fb923c)"}],methodologyCards:[{title:"Prompt = Structured Control Language",subtitle:"\u63d0\u793a\u8bcd\u662f\u7ed3\u6784\u5316\u7684\u63a7\u5236\u8bed\u8a00",desc:"\u628a\u6a21\u7cca\u60f3\u6cd5\u8f6c\u5316\u4e3a\u7cbe\u51c6\u7684\u89c6\u89c9\u6307\u4ee4\uff0c\u53ef\u590d\u7528\u3001\u53ef\u63a7\u7684\u89c6\u89c9\u8f93\u51fa\u3002",iconPath:"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM12 2v20"},{title:"AI Design = System Design",subtitle:"AI\u8bbe\u8ba1\u662f\u7cfb\u7edf\u8bbe\u8ba1",desc:"\u4e0d\u53ea\u5199\u63d0\u793a\u8bcd\uff0c\u642d\u5efa\u5b8c\u6574\u7684\u521b\u4f5c\u4f53\u7cfb\uff0c\u8ba9AI\u670d\u52a1\u4e8e\u8bbe\u8ba1\u76ee\u6807\u3002",iconPath:"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM2 12h20"},{title:"Good Design = Scalable & Reusable",subtitle:"\u597d\u8bbe\u8ba1\u662f\u53ef\u89c4\u6a21\u5316\u4e0e\u590d\u7528\u7684",desc:"\u4ece\u5355\u6b21\u751f\u4ea7\u5230\u7cfb\u7edf\u5316\u8f93\u51fa\uff0c\u964d\u672c\u63d0\u6548\uff0c\u4fdd\u969c\u89c6\u89c9\u4e00\u81f4\u6027\u3002",iconPath:"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"}],skills:[{name:"Prompt Engineering",cn:"\u63d0\u793a\u8bcd\u5de5\u7a0b",pct:90},{name:"Visual Design",cn:"\u89c6\u89c9\u8bbe\u8ba1",pct:85},{name:"Automation",cn:"\u81ea\u52a8\u5316",pct:90},{name:"System Thinking",cn:"\u7cfb\u7edf\u601d\u7ef4",pct:88}],impacts:[{value:"10X+",label:"\u6548\u7387\u63d0\u5347"},{value:"2000W+",label:"\u5e74\u9500\u552e\u989d\u652f\u6301"},{value:"10000+",label:"\u751f\u6210\u7d20\u6750"},{value:"98%+",label:"\u4e00\u81f4\u6027\u63a7\u5236"}],services:[]};
+var _a=_lpd();
+var aiWorks=(_a&&_a.aiWorks&&_a.aiWorks.length)?_a.aiWorks:_d.aiWorks;
+var works=(_a&&_a.works&&_a.works.length)?_a.works:_d.works;
+var methodologyCards=(_a&&_a.methodologyCards&&_a.methodologyCards.length)?_a.methodologyCards:_d.methodologyCards;
+var skills=(_a&&_a.skills&&_a.skills.length)?_a.skills:_d.skills;
+var impacts=(_a&&_a.impacts&&_a.impacts.length)?_a.impacts:_d.impacts;
+var services=(_a&&_a.services)?_a.services:_d.services;
+var _dHome={brandName:'Lithos',heroTitle1:'Layers hold',heroTitle2:'tales of time',heroDescLeft:'Every layer of sediment records a chapter of our planet, from ancient seabeds to drifting ash, layered across millions of years beneath us.',heroDescRight:'Our interactive maps let you peel back the crust to trace how stones, fossils, and deep time combine to shape the ground beneath your feet.',heroButtonText:'Start Digging',bgImage1:'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_195923_b0ba8ace-1d1d-4f2c-9a28-1ab84b330680.png&w=1280&q=85',bgImage2:'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_201152_bba90a12-bf12-459f-91f0-51f237dbaf3b.png&w=1280&q=85',sectionAiSystemsEn:'AI Systems',sectionAiSystemsCn:'AI Systems',sectionDesignWorksEn:'Design Works',sectionDesignWorksCn:'Crafted Experiences',sectionServicesEn:'Services',sectionServicesCn:'AI Systems',sectionMethodologyEn:'Methodology',sectionMethodologyCn:'我的方法论',sectionAboutEn:'About Me',sectionAboutCn:'关于我',aboutBio:'专注于 AI 视觉与设计的融合，擅长将 AI 技术应用于商业设计场景，构建高效的视觉生产系统。拥有丰富的品牌视觉设计经验与 AI 工具开发经验，致力于用设计与技术创造更大价值。',footerTagline1:"Let's Build",footerTaglineHighlight:'Scalable',footerTagline2:' Creativity.',footerCopyright:'© 2024 All rights reserved.',footerButtonText:'Get In Touch'};
+var _dNav=[{label:'HOME',target:'hero'},{label:'AI SYSTEMS',target:'ai-systems'},{label:'DESIGN WORKS',target:'design-works'},{label:'SERVICES',target:'services'},{label:'METHODOLOGY',target:'methodology'},{label:'ABOUT',target:'about'}];
+var _home=(_a&&_a.home)?_a.home:null;
+var home=_home||_dHome;
+var navItems=(_a&&_a.nav&&_a.nav.length)?_a.nav:_dNav;
+var BG_IMAGE_1=home.bgImage1||'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_195923_b0ba8ace-1d1d-4f2c-9a28-1ab84b330680.png&w=1280&q=85';
+var BG_IMAGE_2=home.bgImage2||'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_201152_bba90a12-bf12-459f-91f0-51f237dbaf3b.png&w=1280&q=85';
+
+
+function RevealLayer({ image, cursorX, cursorY }) {
+  const canvasRef = useRef(null);
+  const maskRef = useRef(null);
+  const draw = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (cursorX < 0 || cursorY < 0) return;
+    const g = ctx.createRadialGradient(cursorX, cursorY, 0, cursorX, cursorY, SPOTLIGHT_R);
+    g.addColorStop(0, "rgba(255,255,255,1)");
+    g.addColorStop(0.4, "rgba(255,255,255,1)");
+    g.addColorStop(0.6, "rgba(255,255,255,0.75)");
+    g.addColorStop(0.75, "rgba(255,255,255,0.4)");
+    g.addColorStop(0.88, "rgba(255,255,255,0.12)");
+    g.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(cursorX, cursorY, SPOTLIGHT_R, 0, Math.PI * 2);
+    ctx.fill();
+    const dataUrl = canvas.toDataURL();
+    if (maskRef.current) {
+      maskRef.current.style.maskImage = "url(" + dataUrl + ")";
+      maskRef.current.style.webkitMaskImage = "url(" + dataUrl + ")";
+      maskRef.current.style.maskSize = "100% 100%";
+      maskRef.current.style.webkitMaskSize = "100% 100%";
+    }
+  }, [cursorX, cursorY]);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    resize();
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
+  }, []);
+  useEffect(() => { draw(); }, [draw]);
+  return (
+    <>
+      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" style={{ display: "none" }} />
+      <div ref={maskRef} className="absolute inset-0 bg-center bg-cover bg-no-repeat pointer-events-none" style={{ zIndex: 30, backgroundImage: "url(" + image + ")" }} />
+    </>
+  );
+}
+
+function App() {
+  const mouse = useRef({ x: -999, y: -999 });
+  const smooth = useRef({ x: -999, y: -999 });
+  const rafRef = useRef(0);
+  const [cursorPos, setCursorPos] = useState({ x: -999, y: -999 });
+  const [scrolled, setScrolled] = useState(false);
+
+  const animate = useCallback(() => {
+    smooth.current.x += (mouse.current.x - smooth.current.x) * 0.1;
+    smooth.current.y += (mouse.current.y - smooth.current.y) * 0.1;
+    setCursorPos({ x: smooth.current.x, y: smooth.current.y });
+    rafRef.current = requestAnimationFrame(animate);
+  }, []);
+  useEffect(() => {
+    const onMove = (e) => { mouse.current.x = e.clientX; mouse.current.y = e.clientY; };
+    const onScroll = () => { setScrolled(window.scrollY > window.innerHeight * 0.8); };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    rafRef.current = requestAnimationFrame(animate);
+    return () => { 
+      window.removeEventListener("mousemove", onMove); 
+      window.removeEventListener("scroll", onScroll); 
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, [animate]);
+  const scrollTo = (target) => { const el = document.getElementById(target); if (el) el.scrollIntoView({ behavior: "smooth" }); };
+
+  return (
+    <div className="min-h-screen bg-white tracking-[-0.02em]" style={{ fontFamily: "'Inter','Noto Sans SC',sans-serif" }}>
+      <nav className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-center p-4 sm:p-5">
+        {!scrolled && (
+          <div className="absolute left-4 sm:left-5 flex items-center gap-2.5">
+            <svg width="26" height="26" viewBox="0 0 256 256" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 256 256 L 128 256 L 0 128 L 128 128 Z" />
+              <path d="M 256 128 L 128 128 L 0 0 L 128 0 Z" />
+            </svg>
+            <span className="text-white text-2xl font-playfair italic">{home.brandName}</span>
+          </div>
+        )}
+        <div className={"flex rounded-full px-2 py-2 items-center gap-1 border transition-all duration-300 " + (scrolled ? "bg-white/80 backdrop-blur-2xl border-gray-200/80 shadow-lg shadow-black/5" : "bg-white/20 backdrop-blur-md border-white/30")}>
+          {navItems.filter(item => item.target !== "services" || services.length > 0).map((item, i) => (
+            <button key={item.label} onClick={() => scrollTo(item.target)} className={"px-4 py-1.5 rounded-full text-sm font-medium transition-colors " + (scrolled ? "text-gray-500 hover:bg-gray-200/70 hover:text-gray-900" : "text-white/80 hover:bg-white/20 hover:text-white")}>{item.label}</button>
+          ))}
+        </div>
+      </nav>
+
+      <section id="hero" className="relative w-full overflow-hidden bg-black" style={{ height: "100dvh" }}>
+        <div className="absolute inset-0 bg-center bg-cover bg-no-repeat hero-zoom" style={{ zIndex: 10, backgroundImage: "url(" + BG_IMAGE_1 + ")" }} />
+        <RevealLayer image={BG_IMAGE_2} cursorX={cursorPos.x} cursorY={cursorPos.y} />
+        <div className="absolute top-[14%] left-0 right-0 flex flex-col items-center text-center px-5 pointer-events-none z-50">
+          <h1 className="text-white leading-[0.95]">
+            <span className="block font-playfair italic font-normal text-5xl sm:text-7xl md:text-8xl hero-anim hero-reveal" style={{ letterSpacing: "-0.05em", animationDelay: "0.25s" }}>{home.heroTitle1}</span>
+            <span className="block font-normal text-5xl sm:text-7xl md:text-8xl -mt-1 hero-anim hero-reveal" style={{ letterSpacing: "-0.08em", animationDelay: "0.42s" }}>{home.heroTitle2}</span>
+          </h1>
+        </div>
+        <div className="hidden sm:block absolute bottom-14 left-10 md:left-14 max-w-[260px] z-50 hero-anim hero-fade" style={{ animationDelay: "0.7s" }}>
+          <p className="text-sm text-white/80 leading-relaxed">{home.heroDescLeft}</p>
+        </div>
+        <div className="absolute bottom-10 sm:bottom-24 left-5 right-5 sm:left-auto sm:right-10 md:right-14 max-w-full sm:max-w-[260px] flex flex-col items-start gap-4 sm:gap-5 z-50 hero-anim hero-fade" style={{ animationDelay: "0.85s" }}>
+          <p className="text-xs sm:text-sm text-white/80 leading-relaxed">{home.heroDescRight}</p>
+          <button className="bg-[#e8702a] hover:bg-[#d2611f] text-white text-sm font-medium px-7 py-3 rounded-full transition-all hover:scale-[1.03] active:scale-95 hover:shadow-lg hover:shadow-[#e8702a]/30">{home.heroButtonText}</button>
+        </div>
+      </section>
+
+      <section id="ai-systems" className="bg-white px-6 sm:px-10 md:px-16 lg:px-20 py-20 sm:py-28">
+        <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
+          <div className="lg:w-[22%] flex-shrink-0">
+            <h2 className="text-gray-900 text-4xl sm:text-5xl md:text-6xl font-normal leading-[1.05] tracking-[-0.03em]">{home.sectionAiSystemsEn}<br /><span className="font-playfair italic text-gray-500">{home.sectionAiSystemsCn}</span></h2>
+          </div>
+          <div className="lg:w-[78%] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {aiWorks.map((w) => (
+              <div key={w.title} className="group relative rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{ aspectRatio: "3/4" }} >
+                <div className="absolute inset-0" style={{background: w.gradient}} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                <div className="absolute inset-0 flex flex-col justify-end p-5">
+                  <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 rounded-full mb-3">{w.tag}</span>
+                  <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">{w.title}</h3>
+                  <p className="text-white/60 text-xs leading-relaxed mb-3">{w.desc}</p>
+                  <div className="flex justify-end"><span className="text-white/30 group-hover:text-white/70 transition-colors"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="design-works" className="bg-white px-6 sm:px-10 md:px-16 lg:px-20 py-20 sm:py-28">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
+            <div className="lg:w-[22%] flex-shrink-0">
+              <h2 className="text-gray-900 text-4xl sm:text-5xl md:text-6xl font-normal leading-[1.05] tracking-[-0.03em]">{home.sectionDesignWorksEn}<br /><span className="font-playfair italic text-gray-500">{home.sectionDesignWorksCn}</span></h2>
+            </div>
+            <div className="lg:w-[78%]">
+              <div className="horizontal-scroll pb-4">
+                {works.map((work) => (
+                  <div key={work.title} className="group relative rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{ width: "240px", height: "320px", flexShrink: 0 }}>
+                    <div className="absolute inset-0" style={{background: work.gradient}} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                    <div className="absolute inset-0 flex flex-col justify-end p-5">
+                      <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 rounded-full mb-3">{work.tag}</span>
+                      <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">{work.title}</h3>
+                      <p className="text-white/60 text-xs leading-relaxed mb-3">{work.desc}</p>
+                      <div className="flex justify-end"><span className="text-white/30 group-hover:text-white/70 transition-colors"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {services.length > 0 && (
+      <section id="services" className="bg-white px-6 sm:px-10 md:px-16 lg:px-20 py-20 sm:py-28">
+        <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
+          <div className="lg:w-[22%] flex-shrink-0">
+            <h2 className="text-gray-900 text-4xl sm:text-5xl md:text-6xl font-normal leading-[1.05] tracking-[-0.03em]">{home.sectionServicesEn}<br /><span className="font-playfair italic text-gray-500">{home.sectionServicesCn}</span></h2>
+          </div>
+          <div className="lg:w-[78%] grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {services.map((s) => (
+              <div key={s.title} className="group bg-gray-50 rounded-2xl border border-gray-100 p-6 sm:p-8 hover:border-gray-200 transition-all duration-300">
+                <h3 className="text-gray-900 text-lg font-semibold mb-1">{s.title}</h3>
+                <p className="text-gray-900/60 text-sm mb-3">{s.subtitle}</p>
+                <p className="text-gray-400 text-sm leading-relaxed mb-4">{s.desc}</p>
+                <div className="flex flex-wrap gap-2">
+                  {s.tags.map((tag) => (
+                    <span key={tag} className="inline-block text-[10px] font-medium tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      )}
+
+      <section id="methodology" className="bg-white px-6 sm:px-10 md:px-16 lg:px-20 py-20 sm:py-28">
+        <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
+          <div className="lg:w-[22%] flex-shrink-0">
+            <div className="rounded-2xl p-6 sm:p-8 h-full min-h-[200px] flex flex-col justify-end" style={{ background: "linear-gradient(135deg, #7c3aed 0%, #a855f7 40%, #f472b6 100%)" }}>
+              <h2 className="text-white text-3xl sm:text-4xl font-normal leading-[1.1] tracking-[-0.03em]">{home.sectionMethodologyEn}</h2>
+              <p className="text-white/80 text-sm mt-2">{home.sectionMethodologyCn}</p>
+            </div>
+          </div>
+          <div className="lg:w-[78%] grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {methodologyCards.map((card) => (
+              <div key={card.title} className="group bg-gray-50 rounded-2xl border border-gray-100 p-6 sm:p-8 hover:border-gray-200 transition-all duration-300 flex flex-col">
+                <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center mb-6">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={card.iconPath}/></svg>
+                </div>
+                <h3 className="text-gray-900 text-base font-semibold leading-snug mb-2">{card.title}</h3>
+                <p className="text-gray-900/70 text-sm mb-3">{card.subtitle}</p>
+                <p className="text-gray-400 text-xs leading-relaxed mt-auto">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="about" className="bg-white px-6 sm:px-10 md:px-16 lg:px-20 py-20 sm:py-28">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
+            <div className="lg:w-[22%] flex-shrink-0">
+              <h2 className="text-gray-900 text-4xl sm:text-5xl md:text-6xl font-normal leading-[1.05] tracking-[-0.03em]">{home.sectionAboutEn}<br /><span className="font-playfair italic text-gray-500 text-3xl sm:text-4xl">{"\u5173\u4e8e\u6211"}</span></h2>
+              <div className="mt-6 w-full max-w-[280px] rounded-2xl overflow-hidden bg-gray-200" style={{ aspectRatio: "3/4" }}>
+                <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+              </div>
+            </div>
+            <div className="lg:w-[78%]">
+              <div className="flex flex-col gap-8" style={{ marginTop: "clamp(80px, 12vh, 150px)" }}>
+                <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-2xl">{home.aboutBio}</p>
+                <div className="flex flex-col sm:flex-row gap-8 sm:gap-12">
+                  <div className="flex-1 flex flex-col gap-5">
+                    {skills.map((s) => (
+                      <div key={s.name}>
+                        <div className="flex justify-between items-baseline mb-1.5">
+                          <div>
+                            <span className="text-gray-900 text-sm font-medium">{s.name}</span>
+                            <span className="text-gray-400 text-xs ml-2">{s.cn}</span>
+                          </div>
+                          <span className="text-gray-900 text-sm font-semibold">{s.pct}%</span>
+                        </div>
+                        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="skill-bar h-full bg-indigo-500 rounded-full" style={{ width: s.pct + "%" }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex-1 bg-gray-50 rounded-2xl border border-gray-100 p-6 sm:p-8 flex flex-col justify-start">
+                    <p className="text-indigo-500 text-sm font-medium mb-1">Impact</p>
+                    <p className="text-gray-900 text-lg font-semibold mb-6">{"\u6210\u679c\u4e0e\u5f71\u54cd"}</p>
+                    <div className="grid grid-cols-2 gap-6">
+                      {impacts.map((im) => (
+                        <div key={im.label}>
+                          <p className="text-gray-900 text-2xl sm:text-3xl font-bold tracking-tight">{im.value}</p>
+                          <p className="text-gray-400 text-xs mt-1">{im.label}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer className="bg-[#0a0a0f] px-6 sm:px-10 md:px-16 lg:px-20 py-12 sm:py-16">
+        <div className="max-w-[1400px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+          <p className="text-white text-xl sm:text-2xl font-light">
+            {home.footerTagline1} <span className="text-indigo-400 font-medium">{home.footerTaglineHighlight}</span>{home.footerTagline2}
+          </p>
+          <div className="flex items-center gap-6">
+            <span className="text-white/40 text-xs">{home.footerCopyright}</span>
+            <button className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium px-6 py-2.5 rounded-full transition-colors">
+              {home.footerButtonText}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </footer>
+
+            }
+
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+<script>
+(function() {
+  var _el = null;
+  var _paused = false;
+  var _speed = 0.8;
+  function init() {
+    _el = document.querySelector('.horizontal-scroll');
+    if (!_el) { setTimeout(init, 500); return; }
+    // Clone items for seamless loop
+    var count = _el.children.length;
+    for (var i = 0; i < count; i++) {
+      _el.appendChild(_el.children[i].cloneNode(true));
+    }
+    _el.addEventListener('mouseenter', function() { _paused = true; });
+    _el.addEventListener('mouseleave', function() { _paused = false; });
+    setInterval(tick, 20);
+  }
+  function tick() {
+    if (!_el || _paused) return;
+    var half = (_el.scrollWidth - _el.clientWidth) / 2;
+    if (_el.scrollLeft >= half) {
+      _el.scrollLeft = 0;
+    } else {
+      _el.scrollLeft += _speed;
+    }
+  }
+  if (document.readyState === 'complete') { init(); }
+  else { window.addEventListener('load', init); }
+})();
+</script>
+
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+(function(){
+  var pct = 0;
+  var bar = document.getElementById("loadingBar");
+  var pctEl = document.getElementById("loadingPct");
+  var overlay = document.getElementById("loadingOverlay");
+  var int = setInterval(function(){
+    pct += 0.5 + Math.random() * 3;
+    if(pct >= 100){
+      pct = 100; clearInterval(int);
+      bar.style.width = "100%"; pctEl.textContent = "100%";
+      overlay.style.opacity = "0";
+      overlay.style.visibility = "hidden";
+      // After a short delay, animate hero with GSAP
+      setTimeout(function(){
+        var mm = gsap.matchMedia();
+        mm.add("(prefers-reduced-motion: no-preference)", function(){
+          var tl = gsap.timeline({defaults:{ease:"power3.out"}});
+          tl.fromTo(".hero-zoom", {scale:1.12}, {scale:1,duration:1.8,ease:"power2.out"}, 0);
+          tl.fromTo(document.querySelectorAll(".hero-reveal"), {y:28,autoAlpha:0,filter:"blur(12px)"}, {y:0,autoAlpha:1,filter:"blur(0px)",duration:1.1,stagger:0.17}, 0.1);
+          tl.fromTo(document.querySelectorAll(".hero-fade"), {y:20,autoAlpha:0}, {y:0,autoAlpha:1,duration:1,stagger:0.15}, 0.55);
+          
+        });
+        mm.add("(prefers-reduced-motion: reduce)", function(){
+          gsap.set([".hero-zoom",".hero-reveal",".hero-fade"], {clearProps:"all"});
+        });
+        // ScrollTrigger for section reveals
+        gsap.fromTo("#ai-systems .gsap-reveal", {y:40,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.8,ease:"power2.out",scrollTrigger:{trigger:"#ai-systems",start:"top 75%",toggleActions:"play none none reverse"}});
+        gsap.fromTo("#ai-systems .gsap-card", {y:60,autoAlpha:0,scale:0.95}, {y:0,autoAlpha:1,scale:1,duration:0.7,stagger:0.1,ease:"power2.out",scrollTrigger:{trigger:"#ai-systems",start:"top 70%",toggleActions:"play none none reverse"}});
+        gsap.fromTo("#design-works .gsap-reveal", {y:40,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.8,ease:"power2.out",scrollTrigger:{trigger:"#design-works",start:"top 75%",toggleActions:"play none none reverse"}});
+        gsap.fromTo("#methodology .gsap-reveal", {y:40,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.8,ease:"power2.out",scrollTrigger:{trigger:"#methodology",start:"top 75%",toggleActions:"play none none reverse"}});
+        gsap.fromTo("#methodology .gsap-card", {y:50,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.7,stagger:0.1,ease:"power2.out",scrollTrigger:{trigger:"#methodology",start:"top 70%",toggleActions:"play none none reverse"}});
+        gsap.fromTo("#about .gsap-reveal", {y:40,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.8,ease:"power2.out",scrollTrigger:{trigger:"#about",start:"top 75%",toggleActions:"play none none reverse"}});
+        gsap.fromTo("#about .skill-bar", {scaleX:0,transformOrigin:"left"}, {scaleX:1,duration:1.2,stagger:0.15,ease:"power2.out",scrollTrigger:{trigger:"#about",start:"top 70%",toggleActions:"play none none reverse"}});
+        ScrollTrigger.refresh();
+      }, 100);
+      return;
+    }
+    bar.style.width = pct + "%";
+    pctEl.textContent = Math.round(pct) + "%";
+  }, 25);
+})();
+</script>
+</body>
+</html>

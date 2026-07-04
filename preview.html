@@ -4,8 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Lithos - Layers Hold Tales of Time</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,500;1,600&display=swap" rel="stylesheet" />
-<script src="https://cdn.tailwindcss.com"></script>
+<link  rel="stylesheet" />
+<script src="libs/tailwind.js"></script>
 <script>
 tailwind.config = { theme: { extend: { fontFamily: { playfair: ['Playfair Display', 'serif'] } } } }
 </script>
@@ -46,9 +46,232 @@ tailwind.config = { theme: { extend: { fontFamily: { playfair: ['Playfair Displa
 .modal-close{position:fixed;top:20px;right:24px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;z-index:210}
 .modal-close:hover{background:rgba(255,255,255,0.18)}
 @media(max-width:640px){.modal-content{flex-direction:column}.modal-image{width:100%;min-height:280px}.modal-text{width:100%;padding:32px 28px}}
+
+        /* Poster canvas styles */
+/* 基础样式重置 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 锁死 1920x1080 实体沙箱 */
+        #poster-canvas {
+
+            width: 1920px;
+            height: 1080px;
+            background-color: #000000;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transform-origin: center center;
+            color: #ffffff;
+            font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 占位图通用样式 */
+        .image-placeholder {
+            background-color: #141414;
+            border: 1px dashed #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #444;
+            font-size: 12px;
+            position: absolute;
+        }
+
+        /* 统一大英文规格 */
+        .title-en {
+            font-size: 82px;
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 0.9;
+            position: absolute;
+            white-space: nowrap;
+        }
+
+        /* 统一大中文规格 */
+        .title-cn {
+            font-size: 64px;
+            font-weight: bold;
+            line-height: 1;
+            position: absolute;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        /* 右上角蓝色空心小圈 */
+        .title-cn::after {
+            content: "°";
+            color: #0055ff;
+            font-size: 42px;
+            font-weight: 300;
+            position: absolute;
+            top: -12px;
+            right: -24px;
+        }
+
+        /* 统一小叙述字规格 */
+        .desc-text {
+            font-size: 11px;
+            color: #888888;
+            line-height: 1.6;
+            position: absolute;
+            width: 240px;
+        }
+
+        /* ==========================================================================
+           【绝对物理坐标系】
+           ========================================================================== */
+        
+        /* --- 轴线 1：最左侧对齐线 (left: 60px) --- */
+        #img-athlete          { left: 60px;  top: 40px;  width: 350px; height: 490px; }
+        #title-cooperation    { left: 60px;  top: 560px; }
+        #desc-cooperation     { left: 60px;  top: 795px; }
+        
+        /* 【下移位置】：整体往下沉，完全贴近底部边缘 */
+        #title-collaboration  { left: 60px;  top: 935px; font-size: 92px; } 
+
+        /* --- 轴线 2：左区中段线 --- */
+        #title-care           { left: 440px; top: 40px; }
+        #title-efficiency     { left: 440px; top: 125px; }
+        #desc-efficiency      { left: 440px; top: 430px; } 
+
+        /* --- 轴线 3：左区右侧挂件线 --- */
+        #img-boxing           { left: 720px; top: 40px;  width: 210px; height: 210px; }
+        #img-trail-shoe       { left: 690px; top: 540px; width: 260px; height: 330px; }
+
+        /* --- 轴线 4：【绿框区域左对齐大轴】 (left: 1130px) --- */
+        #img-hanging-shoe     { left: 1130px; top: 180px; width: 430px; height: 240px; }
+        #title-creativity     { left: 1130px; top: 450px; } 
+        #title-creation-cn    { left: 1130px; top: 545px; } 
+        #desc-creation        { left: 1130px; top: 625px; width: 250px; } 
+        
+        /* 【下移位置】：与左边的大英文齐平，彻底和上方的足球图错开空间 */
+        #title-comfort        { left: 1130px; top: 760px; font-size: 92px; } 
+        
+        /* 足球图往上提，保持原本在中间偏下的区域 */
+        #img-football         { left: 1130px; top: 883px; width: 250px; height: 135px; } 
+
+        /* --- 轴线 5：最右侧靠边对齐线 (right: 60px) --- */
+        #title-convenience    { right: 60px; top: 40px;  text-align: right; }
+        #title-convenience-cn { right: 60px; top: 125px; text-align: right; }
+        #desc-hanging-shoe    { right: 60px; top: 350px; text-align: right; width: 220px; }
+        #title-intelligence   { right: 60px; top: 590px; text-align: right; } 
+        
+        /* 【下移位置】：右下角小字同步下移，底边缘看齐 */
+        #desc-football        { right: 60px; top: 950px; text-align: right; width: 220px; }
+
+        /* Poster canvas styles */
+/* 基础样式重置 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 锁死 1920x1080 实体沙箱 */
+        
+
+        /* 占位图通用样式 */
+        .image-placeholder {
+            background-color: #141414;
+            border: 1px dashed #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #444;
+            font-size: 12px;
+            position: absolute;
+        }
+
+        /* 统一大英文规格 */
+        .title-en {
+            font-size: 82px;
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 0.9;
+            position: absolute;
+            white-space: nowrap;
+        }
+
+        /* 统一大中文规格 */
+        .title-cn {
+            font-size: 64px;
+            font-weight: bold;
+            line-height: 1;
+            position: absolute;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        /* 右上角蓝色空心小圈 */
+        .title-cn::after {
+            content: "°";
+            color: #0055ff;
+            font-size: 42px;
+            font-weight: 300;
+            position: absolute;
+            top: -12px;
+            right: -24px;
+        }
+
+        /* 统一小叙述字规格 */
+        .desc-text {
+            font-size: 11px;
+            color: #888888;
+            line-height: 1.6;
+            position: absolute;
+            width: 240px;
+        }
+
+        /* ==========================================================================
+           【绝对物理坐标系】
+           ========================================================================== */
+        
+        /* --- 轴线 1：最左侧对齐线 (left: 60px) --- */
+        #img-athlete          { left: 60px;  top: 40px;  width: 350px; height: 490px; }
+        #title-cooperation    { left: 60px;  top: 560px; }
+        #desc-cooperation     { left: 60px;  top: 795px; }
+        
+        /* 【下移位置】：整体往下沉，完全贴近底部边缘 */
+        #title-collaboration  { left: 60px;  top: 935px; font-size: 92px; } 
+
+        /* --- 轴线 2：左区中段线 --- */
+        #title-care           { left: 440px; top: 40px; }
+        #title-efficiency     { left: 440px; top: 125px; }
+        #desc-efficiency      { left: 440px; top: 430px; } 
+
+        /* --- 轴线 3：左区右侧挂件线 --- */
+        #img-boxing           { left: 720px; top: 40px;  width: 210px; height: 210px; }
+        #img-trail-shoe       { left: 690px; top: 540px; width: 260px; height: 330px; }
+
+        /* --- 轴线 4：【绿框区域左对齐大轴】 (left: 1130px) --- */
+        #img-hanging-shoe     { left: 1130px; top: 180px; width: 430px; height: 240px; }
+        #title-creativity     { left: 1130px; top: 450px; } 
+        #title-creation-cn    { left: 1130px; top: 545px; } 
+        #desc-creation        { left: 1130px; top: 625px; width: 250px; } 
+        
+        /* 【下移位置】：与左边的大英文齐平，彻底和上方的足球图错开空间 */
+        #title-comfort        { left: 1130px; top: 760px; font-size: 92px; } 
+        
+        /* 足球图往上提，保持原本在中间偏下的区域 */
+        #img-football         { left: 1130px; top: 883px; width: 250px; height: 135px; } 
+
+        /* --- 轴线 5：最右侧靠边对齐线 (right: 60px) --- */
+        #title-convenience    { right: 60px; top: 40px;  text-align: right; }
+        #title-convenience-cn { right: 60px; top: 125px; text-align: right; }
+        #desc-hanging-shoe    { right: 60px; top: 350px; text-align: right; width: 220px; }
+        #title-intelligence   { right: 60px; top: 590px; text-align: right; } 
+        
+        /* 【下移位置】：右下角小字同步下移，底边缘看齐 */
+        #desc-football        { right: 60px; top: 950px; text-align: right; width: 220px; }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="libs/gsap.min.js"></script>
+<script src="libs/ScrollTrigger.min.js"></script>
 </head>
 <body>
 <div id="loadingOverlay" style="position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.6s ease,visibility 0.6s ease">
@@ -63,9 +286,9 @@ tailwind.config = { theme: { extend: { fontFamily: { playfair: ['Playfair Displa
 </div>
 
 <div id="root"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" crossorigin></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" crossorigin></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.4/babel.min.js"></script>
+<script src="libs/react.production.min.js"></script>
+<script src="libs/react-dom.production.min.js"></script>
+<script src="libs/babel.min.js"></script>
 <script type="text/babel" data-type="module">
 const { useState, useEffect, useRef, useCallback } = React;
 
@@ -203,6 +426,7 @@ function App() {
           </h1>
         </div>
       
+
         <div className="hero-carousel">
           <div id="heroCarousel" className="hero-carousel-inner">
             <div className="hero-carousel-item"><img src="img/356a70775848962b6ccf4ccf12f3638e.jpg" alt="" /></div>
@@ -215,15 +439,13 @@ function App() {
             <div className="hero-carousel-item"><img src="img/patch-swatch-1407.avif" alt="" /></div>
           </div>
         </div>
+
+        
         </section>
-      <section className="w-full bg-black flex items-center justify-center" style={{ height: "auto", minHeight: "calc(50vh + 100px)", padding: "50px 0" }}>
-        <div className="w-full max-w-[1920px] mx-auto">
-          <div style={{position:"relative",overflow:"hidden"}}>
-          <img src="img/bg-3.png" alt="" className="w-full h-auto block" id="zoomTarget" style={{ maxHeight: "90vh", objectFit: "contain", display:"block" }} />
-          <div id="magLens" style={{display:"none",position:"absolute",width:"160px",height:"160px",borderRadius:"0",border:"2px solid rgba(255,255,255,0.2)",pointerEvents:"none",zIndex:10,backgroundRepeat:"no-repeat",boxShadow:"0 0 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,0,0,0.3)",overflow:"hidden"}}></div>
-        </div>
-        </div>
-      </section>
+
+      
+      {/* Poster section - inserted dynamically */}
+      <div id="poster-target" style={{ display: "contents" }}></div>
       <section id="ai-systems" className="bg-white px-6 sm:px-10 md:px-16 lg:px-20 py-20 sm:py-28">
         <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
           <div className="lg:w-[22%] flex-shrink-0">
@@ -639,4 +861,82 @@ gsap.registerPlugin(ScrollTrigger);
 
 
 
+
+
+<script>function resizePoster() {
+            const canvas = document.getElementById("poster-canvas");
+            if (!canvas) return;
+            const parent = canvas.parentElement;
+            if (!parent) return;
+            const targetWidth = 1920;
+            const targetHeight = 1080;
+            const containerWidth = parent.clientWidth;
+            const scale = Math.min(1, containerWidth / targetWidth);
+            canvas.style.transform = "translate(-50%, -50%) scale(" + scale + ")";
+        }
+
+        window.addEventListener("resize", resizePoster);
+        </script>
+
+<script>
+(function() {
+  var timer = setInterval(function() {
+    var target = document.getElementById('poster-target');
+    var template = document.getElementById('poster-template');
+    if (target && template) {
+      clearInterval(timer);
+      var poster = document.createElement('div');
+      poster.innerHTML = template.innerHTML;
+      target.parentNode.replaceChild(poster.firstElementChild, target);
+      template.remove();
+      // Trigger resize after insertion
+      if (typeof resizePoster === 'function') { setTimeout(resizePoster, 100); }
+    }
+  }, 50);
+  // Stop checking after 10 seconds
+  setTimeout(function() { clearInterval(timer); }, 10000);
+})();
+</script>
+
+
+<!-- Poster template (hidden, inserted after hero by JS) -->
+<template id="poster-template"><section class="w-full bg-black" style="min-height:50vh;display:flex;align-items:center;justify-content:center;padding:40px 0">
+        <div style="width:100%;max-width:1920px;position:relative">
+          <div style="width:100%;padding-top:56.25%"></div>
+<div id="poster-canvas">
+        
+        <div id="img-athlete" class="image-placeholder">Athlete (350x490)</div>
+        <div id="title-cooperation" class="title-cn">协作</div>
+        <div id="desc-cooperation" class="desc-text">是非成败转头空，青山依旧在，惯看秋月春风。一壶浊酒喜相逢，古今多少事，滚滚长江东逝水。</div>
+        <div id="title-collaboration" class="title-en">COLLABORATION</div>
+
+        <div id="title-care" class="title-en">CARE</div>
+        <div id="title-efficiency" class="title-cn">效率</div>
+        <div id="desc-efficiency" class="desc-text">滚滚长江东逝水，浪花淘尽英雄。是非成败转头空，青山依旧在，几度夕阳红。白发渔樵江渚上。</div>
+
+        <div id="img-boxing" class="image-placeholder">Boxing (210x210)</div>
+        <div id="img-trail-shoe" class="image-placeholder">Trail Shoe (260x330)</div>
+
+
+        <div id="img-hanging-shoe" class="image-placeholder">Hanging Shoe (430x240)</div>
+        
+        <div id="title-creativity" class="title-en">CREATIVITY</div>
+        <div id="title-creation-cn" class="title-cn">创造</div>
+        <div id="desc-creation" class="desc-text">是非成败转头空，青山依旧在，惯看秋月春风。一壶浊酒喜相逢，古今多少事。</div>
+        
+        <div id="title-comfort" class="title-en">COMFORT</div>
+        <div id="img-football" class="image-placeholder">Football (250x135)</div>
+
+
+        <div id="title-convenience" class="title-en">CONVENIENCE</div>
+        <div id="title-convenience-cn" class="title-cn">便利</div>
+        <div id="desc-hanging-shoe" class="desc-text">是非成败转头空，青山依旧在，惯看秋月春风。一壶浊酒喜相逢，古今多少事，滚滚长江东逝水。</div>
+        <div id="title-intelligence" class="title-cn">智能</div>
+        <div id="desc-football" class="desc-text">滚滚长江东逝水，浪花淘尽英雄。是非成败转头空，青山依旧在，几度夕阳红。</div>
+
+    </div>
+        </div>
+      </section></template>
+
+</body>
 </html>

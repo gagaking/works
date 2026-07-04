@@ -457,20 +457,45 @@ function App() {
           <div className="lg:w-[22%] flex-shrink-0">
             <h2 className="text-gray-900 text-4xl sm:text-5xl md:text-6xl font-normal leading-[1.05] tracking-[-0.03em]" style={{ marginTop: "clamp(40px, 6vw, 80px)" }}>{home.sectionAiSystemsEn}<br /><span className="font-playfair italic text-gray-500">{home.sectionAiSystemsCn}</span></h2>
           </div>
-                    <div className="w-full">
-            <div style={{position:"relative",width:"100%",height:"75vh",overflow:"hidden",cursor:"grab"}} id="aiGalleryWrap">
-              <div id="aiGalleryCanvas" style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:1}}></div>
-              <div id="aiGalleryScroll" style={{position:"absolute",inset:0,zIndex:2,display:"flex",alignItems:"flex-end",willChange:"transform"}}>
-                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/356a70775848962b6ccf4ccf12f3638e.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
-                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/6be329ff166d929f1f856fd6b1fbc269.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
-                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/960bcf6809b996aded23ac0a19987813.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
-                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/d0463c7904b6b8f52c1ec2568c6119f0.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
-                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/d9f8b67a05ced236446eefe1e849d6a0.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
-                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/patch-billboard-1-1920.avif" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
-                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/patch-billboard-4-1920.avif" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
-                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/patch-swatch-1407.avif" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                    <div className="w-full flex flex-col gap-8">
+                            <div className="flex gap-5" style={{flexWrap:"nowrap"}}>
+                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}} onClick={() => window.open('','_self')}>
+                  <div className="absolute inset-0" style={{background:"linear-gradient(135deg,#0c1445 0%,#1a237e 50%,#283593 100%)"}} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                  <div className="absolute inset-0 flex flex-col justify-end p-5">
+                    <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 mb-3">AI</span>
+                    <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">Intelligent Assistant</h3>
+                    <p className="text-white/60 text-xs leading-relaxed mb-3">Deep learning model for natural language understanding</p>
+                  </div>
+                </div>
+                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}} onClick={() => window.open('','_self')}>
+                  <div className="absolute inset-0" style={{background:"linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)"}} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                  <div className="absolute inset-0 flex flex-col justify-end p-5">
+                    <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 mb-3">CV</span>
+                    <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">Computer Vision</h3>
+                    <p className="text-white/60 text-xs leading-relaxed mb-3">Real-time object detection and image segmentation</p>
+                  </div>
+                </div>
+                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}} onClick={() => window.open('','_self')}>
+                  <div className="absolute inset-0" style={{background:"linear-gradient(135deg,#3e065f 0%,#700b97 50%,#a125e8 100%)"}} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                  <div className="absolute inset-0 flex flex-col justify-end p-5">
+                    <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 mb-3">NLP</span>
+                    <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">Text Analytics</h3>
+                    <p className="text-white/60 text-xs leading-relaxed mb-3">Sentiment analysis and multilingual translation</p>
+                  </div>
+                </div>
+                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}} onClick={() => window.open('','_self')}>
+                  <div className="absolute inset-0" style={{background:"linear-gradient(135deg,#0b3d0b 0%,#1b5e20 50%,#388e3c 100%)"}} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                  <div className="absolute inset-0 flex flex-col justify-end p-5">
+                    <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 mb-3">ML</span>
+                    <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">Predictive Models</h3>
+                    <p className="text-white/60 text-xs leading-relaxed mb-3">Time series forecasting and anomaly detection</p>
+                  </div>
+                </div>
               </div>
-            </div>
           </div>
         </div>
       </section>

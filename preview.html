@@ -74,13 +74,19 @@ tailwind.config = { theme: { extend: { fontFamily: { playfair: ['Playfair Displa
         /* 占位图通用样式 */
         .image-placeholder {
             background-color: #141414;
-            border: 1px dashed #333;
+            border: none;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #444;
-            font-size: 12px;
             position: absolute;
+        }
+        .image-placeholder img,
+        .image-placeholder video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         /* 统一大英文规格 */
@@ -905,7 +911,7 @@ gsap.registerPlugin(ScrollTrigger);
           <div style="width:100%;padding-top:56.25%"></div>
 <div id="poster-canvas">
         
-        <div id="img-athlete" class="image-placeholder">Athlete (350x490)</div>
+        <div id="img-athlete" class="image-placeholder"><img src="src-p2/微信图片_2026-07-04_082136_782.jpg" alt="athlete"></div>
         <div id="title-cooperation" class="title-cn">协作</div>
         <div id="desc-cooperation" class="desc-text">是非成败转头空，青山依旧在，惯看秋月春风。一壶浊酒喜相逢，古今多少事，滚滚长江东逝水。</div>
         <div id="title-collaboration" class="title-en">COLLABORATION</div>
@@ -914,18 +920,18 @@ gsap.registerPlugin(ScrollTrigger);
         <div id="title-efficiency" class="title-cn">效率</div>
         <div id="desc-efficiency" class="desc-text">滚滚长江东逝水，浪花淘尽英雄。是非成败转头空，青山依旧在，几度夕阳红。白发渔樵江渚上。</div>
 
-        <div id="img-boxing" class="image-placeholder">Boxing (210x210)</div>
-        <div id="img-trail-shoe" class="image-placeholder">Trail Shoe (260x330)</div>
+        <div id="img-boxing" class="image-placeholder"><img src="src-p2/356a70775848962b6ccf4ccf12f3638e.jpg" alt="boxing"></div>
+        <div id="img-trail-shoe" class="image-placeholder"><img src="src-p2/微信图片_2026-07-04_082149_589.jpg" alt="trail shoe"></div>
 
 
-        <div id="img-hanging-shoe" class="image-placeholder">Hanging Shoe (430x240)</div>
+        <div id="img-hanging-shoe" class="image-placeholder"><video src="src-p2/春.mp4" muted loop playsinline preload="auto"></video></div>
         
         <div id="title-creativity" class="title-en">CREATIVITY</div>
         <div id="title-creation-cn" class="title-cn">创造</div>
         <div id="desc-creation" class="desc-text">是非成败转头空，青山依旧在，惯看秋月春风。一壶浊酒喜相逢，古今多少事。</div>
         
         <div id="title-comfort" class="title-en">COMFORT</div>
-        <div id="img-football" class="image-placeholder">Football (250x135)</div>
+        <div id="img-football" class="image-placeholder"><img src="src-p2/patch-billboard-1-1920.avif" alt="football"></div>
 
 
         <div id="title-convenience" class="title-en">CONVENIENCE</div>
@@ -979,19 +985,32 @@ gsap.registerPlugin(ScrollTrigger);
       shuffled[j] = tmp;
     }
     // 3. Pin poster section: black -> reveal -> lock for viewing -> continue
-    // - start: pin when section top hits viewport top (full black viewport)
-    // - elements spread across 0%-35% of timeline (random reveal phase)
+    // - pin ScrollTrigger starts at "top top": section fills viewport when pinned
+    // - element animation ScrollTrigger starts at "top 50%": elements reveal when half visible
+    // - elements spread across 0%-35% of 200vh timeline (reveal phase)
     // - 35%-100% timeline: all elements visible, user views poster (view phase)
     // - end: unpin after 200% viewport height of scroll
     // - scrub: 0.5 smooths the scroll-driven animation
+    ScrollTrigger.create({
+      trigger: section,
+      start: "top top",
+      end: "+=200%",
+      pin: true,
+      pinSpacing: true,
+      anticipatePin: 1,
+      onEnter: function() {
+        var video = document.querySelector('#img-hanging-shoe video');
+        if (video && video.paused) {
+          setTimeout(function() { video.play(); }, 1500);
+        }
+      }
+    });
+    // Element reveal timeline (starts earlier at "top 50%")
     var tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        start: "top top",
+        start: "top 50%",
         end: "+=200%",
-        pin: true,
-        pinSpacing: true,
-        anticipatePin: 1,
         scrub: 0.5
       }
     });

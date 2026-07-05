@@ -57,7 +57,6 @@ tailwind.config = { theme: { extend: { fontFamily: { playfair: ['Playfair Displa
 
         /* 锁死 1920x1080 实体沙箱 */
         #poster-canvas {
-
             width: 1920px;
             height: 1080px;
             background-color: #000000;
@@ -70,117 +69,6 @@ tailwind.config = { theme: { extend: { fontFamily: { playfair: ['Playfair Displa
             font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", sans-serif;
             -webkit-font-smoothing: antialiased;
         }
-
-        /* 占位图通用样式 */
-        .image-placeholder {
-            background-color: #141414;
-            border: none;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-        }
-        .image-placeholder img,
-        .image-placeholder video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* 统一大英文规格 */
-        .title-en {
-            font-size: 82px;
-            font-weight: 900;
-            letter-spacing: -2px;
-            line-height: 0.9;
-            position: absolute;
-            white-space: nowrap;
-        }
-
-        /* 统一大中文规格 */
-        .title-cn {
-            font-size: 64px;
-            font-weight: bold;
-            line-height: 1;
-            position: absolute;
-            letter-spacing: 2px;
-            white-space: nowrap;
-        }
-
-        /* 右上角蓝色空心小圈 */
-        .title-cn::after {
-            content: "°";
-            color: #0055ff;
-            font-size: 42px;
-            font-weight: 300;
-            position: absolute;
-            top: -12px;
-            right: -24px;
-        }
-
-        /* 统一小叙述字规格 */
-        .desc-text {
-            font-size: 11px;
-            color: #888888;
-            line-height: 1.6;
-            position: absolute;
-            width: 240px;
-        }
-
-        /* ==========================================================================
-           【绝对物理坐标系】
-           ========================================================================== */
-        
-        /* --- 轴线 1：最左侧对齐线 (left: 60px) --- */
-        #img-athlete          { left: 60px;  top: 40px;  width: 350px; height: 490px; }
-        #title-cooperation    { left: 60px;  top: 560px; }
-        #desc-cooperation     { left: 60px;  top: 795px; }
-        
-        /* 【下移位置】：整体往下沉，完全贴近底部边缘 */
-        #title-collaboration  { left: 60px;  top: 935px; font-size: 92px; } 
-
-        /* --- 轴线 2：左区中段线 --- */
-        #title-care           { left: 440px; top: 40px; }
-        #title-efficiency     { left: 440px; top: 125px; }
-        #desc-efficiency      { left: 440px; top: 430px; } 
-
-        /* --- 轴线 3：左区右侧挂件线 --- */
-        #img-boxing           { left: 720px; top: 40px;  width: 210px; height: 210px; }
-        #img-trail-shoe       { left: 690px; top: 540px; width: 260px; height: 330px; }
-
-        /* --- 轴线 4：【绿框区域左对齐大轴】 (left: 1130px) --- */
-        #img-hanging-shoe     { left: 1130px; top: 180px; width: 430px; height: 240px; }
-        #title-creativity     { left: 1130px; top: 450px; } 
-        #title-creation-cn    { left: 1130px; top: 545px; } 
-        #desc-creation        { left: 1130px; top: 625px; width: 250px; } 
-        
-        /* 【下移位置】：与左边的大英文齐平，彻底和上方的足球图错开空间 */
-        #title-comfort        { left: 1130px; top: 760px; font-size: 92px; } 
-        
-        /* 足球图往上提，保持原本在中间偏下的区域 */
-        #img-football         { left: 1130px; top: 883px; width: 250px; height: 135px; } 
-
-        /* --- 轴线 5：最右侧靠边对齐线 (right: 60px) --- */
-        #title-convenience    { right: 60px; top: 40px;  text-align: right; }
-        #title-convenience-cn { right: 60px; top: 125px; text-align: right; }
-        #desc-hanging-shoe    { right: 60px; top: 350px; text-align: right; width: 220px; }
-        #title-intelligence   { right: 60px; top: 590px; text-align: right; } 
-        
-        /* 【下移位置】：右下角小字同步下移，底边缘看齐 */
-        #desc-football        { right: 60px; top: 950px; text-align: right; width: 220px; }
-
-        /* Poster canvas styles */
-/* 基础样式重置 */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* 锁死 1920x1080 实体沙箱 */
-        
 
         /* 占位图通用样式 */
         .image-placeholder {
@@ -262,10 +150,127 @@ tailwind.config = { theme: { extend: { fontFamily: { playfair: ['Playfair Displa
         #desc-creation        { left: 1130px; top: 625px; width: 250px; } 
         
         /* 【下移位置】：与左边的大英文齐平，彻底和上方的足球图错开空间 */
-        #title-comfort        { left: 1130px; top: 760px; font-size: 92px; } 
+        #title-comfort        { left: 1130px; top: 935px; font-size: 92px; } 
         
         /* 足球图往上提，保持原本在中间偏下的区域 */
-        #img-football         { left: 1130px; top: 883px; width: 250px; height: 135px; } 
+        #img-football         { left: 1130px; top: 760px; width: 250px; height: 135px; } 
+
+        /* --- 轴线 5：最右侧靠边对齐线 (right: 60px) --- */
+        #title-convenience    { right: 60px; top: 40px;  text-align: right; }
+        #title-convenience-cn { right: 60px; top: 125px; text-align: right; }
+        #desc-hanging-shoe    { right: 60px; top: 350px; text-align: right; width: 220px; }
+        #title-intelligence   { right: 60px; top: 590px; text-align: right; } 
+        
+        /* 【下移位置】：右下角小字同步下移，底边缘看齐 */
+        #desc-football        { right: 60px; top: 950px; text-align: right; width: 220px; }
+
+        /* Poster canvas styles */
+/* 基础样式重置 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 锁死 1920x1080 实体沙箱 */
+        #poster-canvas {
+            width: 1920px;
+            height: 1080px;
+            background-color: #000000;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transform-origin: center center;
+            color: #ffffff;
+            font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 占位图通用样式 */
+        .image-placeholder {
+            background-color: #141414;
+            border: 1px dashed #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #444;
+            font-size: 12px;
+            position: absolute;
+        }
+
+        /* 统一大英文规格 */
+        .title-en {
+            font-size: 82px;
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 0.9;
+            position: absolute;
+            white-space: nowrap;
+        }
+
+        /* 统一大中文规格 */
+        .title-cn {
+            font-size: 64px;
+            font-weight: bold;
+            line-height: 1;
+            position: absolute;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        /* 右上角蓝色空心小圈 */
+        .title-cn::after {
+            content: "°";
+            color: #0055ff;
+            font-size: 42px;
+            font-weight: 300;
+            position: absolute;
+            top: -12px;
+            right: -24px;
+        }
+
+        /* 统一小叙述字规格 */
+        .desc-text {
+            font-size: 11px;
+            color: #888888;
+            line-height: 1.6;
+            position: absolute;
+            width: 240px;
+        }
+
+        /* ==========================================================================
+           【绝对物理坐标系】
+           ========================================================================== */
+        
+        /* --- 轴线 1：最左侧对齐线 (left: 60px) --- */
+        #img-athlete          { left: 60px;  top: 40px;  width: 350px; height: 490px; }
+        #title-cooperation    { left: 60px;  top: 560px; }
+        #desc-cooperation     { left: 60px;  top: 795px; }
+        
+        /* 【下移位置】：整体往下沉，完全贴近底部边缘 */
+        #title-collaboration  { left: 60px;  top: 935px; font-size: 92px; } 
+
+        /* --- 轴线 2：左区中段线 --- */
+        #title-care           { left: 440px; top: 40px; }
+        #title-efficiency     { left: 440px; top: 125px; }
+        #desc-efficiency      { left: 440px; top: 430px; } 
+
+        /* --- 轴线 3：左区右侧挂件线 --- */
+        #img-boxing           { left: 720px; top: 40px;  width: 210px; height: 210px; }
+        #img-trail-shoe       { left: 690px; top: 540px; width: 260px; height: 330px; }
+
+        /* --- 轴线 4：【绿框区域左对齐大轴】 (left: 1130px) --- */
+        #img-hanging-shoe     { left: 1130px; top: 180px; width: 430px; height: 240px; }
+        #title-creativity     { left: 1130px; top: 450px; } 
+        #title-creation-cn    { left: 1130px; top: 545px; } 
+        #desc-creation        { left: 1130px; top: 625px; width: 250px; } 
+        
+        /* 【下移位置】：与左边的大英文齐平，彻底和上方的足球图错开空间 */
+        #title-comfort        { left: 1130px; top: 935px; font-size: 92px; } 
+        
+        /* 足球图往上提，保持原本在中间偏下的区域 */
+        #img-football         { left: 1130px; top: 760px; width: 250px; height: 135px; } 
 
         /* --- 轴线 5：最右侧靠边对齐线 (right: 60px) --- */
         #title-convenience    { right: 60px; top: 40px;  text-align: right; }
@@ -432,70 +437,66 @@ function App() {
           </h1>
         </div>
       
-
-        <div className="hero-carousel">
-          <div id="heroCarousel" className="hero-carousel-inner">
-            <div className="hero-carousel-item"><img src="img/356a70775848962b6ccf4ccf12f3638e.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/6be329ff166d929f1f856fd6b1fbc269.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/d9f8b67a05ced236446eefe1e849d6a0.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/960bcf6809b996aded23ac0a19987813.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/d0463c7904b6b8f52c1ec2568c6119f0.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/patch-billboard-1-1920.avif" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/patch-billboard-4-1920.avif" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/patch-swatch-1407.avif" alt="" /></div>
-          </div>
-        </div>
-
+<div id="poster-canvas">
         
-        </section>
+        <div id="img-athlete" class="image-placeholder">Athlete (350x490)</div>
+        <div id="title-cooperation" class="title-cn">协作</div>
+        <div id="desc-cooperation" class="desc-text">是非成败转头空，青山依旧在，惯看秋月春风。一壶浊酒喜相逢，古今多少事，滚滚长江东逝水。</div>
+        <div id="title-collaboration" class="title-en">COLLABORATION</div>
 
-      
-      {/* Poster section - inserted dynamically */}
-      <div id="poster-target" style={{ display: "contents" }}></div>
+        <div id="title-care" class="title-en">CARE</div>
+        <div id="title-efficiency" class="title-cn">效率</div>
+        <div id="desc-efficiency" class="desc-text">滚滚长江东逝水，浪花淘尽英雄。是非成败转头空，青山依旧在，几度夕阳红。白发渔樵江渚上。</div>
+
+        <div id="img-boxing" class="image-placeholder">Boxing (210x210)</div>
+        <div id="img-trail-shoe" class="image-placeholder">Trail Shoe (260x330)</div>
+
+
+        <div id="img-hanging-shoe" class="image-placeholder">Hanging Shoe (430x240)</div>
+        
+        <div id="title-creativity" class="title-en">CREATIVITY</div>
+        <div id="title-creation-cn" class="title-cn">创造</div>
+        <div id="desc-creation" class="desc-text">是非成败转头空，青山依旧在，惯看秋月春风。一壶浊酒喜相逢，古今多少事。</div>
+        
+        <div id="img-football" class="image-placeholder">Football (250x135)</div>
+        <div id="title-comfort" class="title-en">COMFORT</div>
+
+
+        <div id="title-convenience" class="title-en">CONVENIENCE</div>
+        <div id="title-convenience-cn" class="title-cn">便利</div>
+        <div id="desc-hanging-shoe" class="desc-text">是非成败转头空，青山依旧在，惯看秋月春风。一壶浊酒喜相逢，古今多少事，滚滚长江东逝水。</div>
+        <div id="title-intelligence" class="title-cn">智能</div>
+        <div id="desc-football" class="desc-text">滚滚长江东逝水，浪花淘尽英雄。是非成败转头空，青山依旧在，几度夕阳红。</div>
+
+    </div>
+        </section>
+      <section className="w-full bg-black flex items-center justify-center" style={{ height: "auto", minHeight: "calc(50vh + 100px)", padding: "50px 0" }}>
+        <div className="w-full max-w-[1920px] mx-auto">
+          <div style={{position:"relative",overflow:"hidden"}}>
+          <img src="img/bg-3.png" alt="" className="w-full h-auto block" id="zoomTarget" style={{ maxHeight: "90vh", objectFit: "contain", display:"block" }} />
+          <div id="magLens" style={{display:"none",position:"absolute",width:"160px",height:"160px",borderRadius:"0",border:"2px solid rgba(255,255,255,0.2)",pointerEvents:"none",zIndex:10,backgroundRepeat:"no-repeat",boxShadow:"0 0 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,0,0,0.3)",overflow:"hidden"}}></div>
+        </div>
+        </div>
+      </section>
       <section id="ai-systems" className="bg-white px-6 sm:px-10 md:px-16 lg:px-20 py-20 sm:py-28">
         <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
           <div className="lg:w-[22%] flex-shrink-0">
             <h2 className="text-gray-900 text-4xl sm:text-5xl md:text-6xl font-normal leading-[1.05] tracking-[-0.03em]" style={{ marginTop: "clamp(40px, 6vw, 80px)" }}>{home.sectionAiSystemsEn}<br /><span className="font-playfair italic text-gray-500">{home.sectionAiSystemsCn}</span></h2>
           </div>
-                    <div className="w-full flex flex-col gap-8">
-                            <div className="flex gap-5" style={{flexWrap:"nowrap"}}>
-                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}} onClick={() => setModalItem({tag:"AI",title:"Intelligent Assistant",desc:"Deep learning model for natural language understanding",gradient:"linear-gradient(135deg,#0c1445 0%,#1a237e 50%,#283593 100%)"})}>
-                  <div className="absolute inset-0" style={{background:"linear-gradient(135deg,#0c1445 0%,#1a237e 50%,#283593 100%)"}} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute inset-0 flex flex-col justify-end p-5">
-                    <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 mb-3">AI</span>
-                    <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">Intelligent Assistant</h3>
-                    <p className="text-white/60 text-xs leading-relaxed mb-3">Deep learning model for natural language understanding</p>
-                  </div>
-                </div>
-                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}} onClick={() => setModalItem({tag:"CV",title:"Computer Vision",desc:"Real-time object detection and image segmentation",gradient:"linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)"})}>
-                  <div className="absolute inset-0" style={{background:"linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)"}} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute inset-0 flex flex-col justify-end p-5">
-                    <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 mb-3">CV</span>
-                    <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">Computer Vision</h3>
-                    <p className="text-white/60 text-xs leading-relaxed mb-3">Real-time object detection and image segmentation</p>
-                  </div>
-                </div>
-                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}} onClick={() => setModalItem({tag:"NLP",title:"Text Analytics",desc:"Sentiment analysis and multilingual translation",gradient:"linear-gradient(135deg,#3e065f 0%,#700b97 50%,#a125e8 100%)"})}>
-                  <div className="absolute inset-0" style={{background:"linear-gradient(135deg,#3e065f 0%,#700b97 50%,#a125e8 100%)"}} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute inset-0 flex flex-col justify-end p-5">
-                    <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 mb-3">NLP</span>
-                    <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">Text Analytics</h3>
-                    <p className="text-white/60 text-xs leading-relaxed mb-3">Sentiment analysis and multilingual translation</p>
-                  </div>
-                </div>
-                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}} onClick={() => setModalItem({tag:"ML",title:"Predictive Models",desc:"Time series forecasting and anomaly detection",gradient:"linear-gradient(135deg,#0b3d0b 0%,#1b5e20 50%,#388e3c 100%)"})}>
-                  <div className="absolute inset-0" style={{background:"linear-gradient(135deg,#0b3d0b 0%,#1b5e20 50%,#388e3c 100%)"}} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute inset-0 flex flex-col justify-end p-5">
-                    <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 mb-3">ML</span>
-                    <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">Predictive Models</h3>
-                    <p className="text-white/60 text-xs leading-relaxed mb-3">Time series forecasting and anomaly detection</p>
-                  </div>
-                </div>
+                    <div className="w-full">
+            <div style={{position:"relative",width:"100%",height:"75vh",overflow:"hidden",cursor:"grab"}} id="aiGalleryWrap">
+              <div id="aiGalleryCanvas" style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:1}}></div>
+              <div id="aiGalleryScroll" style={{position:"absolute",inset:0,zIndex:2,display:"flex",alignItems:"flex-end",willChange:"transform"}}>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/356a70775848962b6ccf4ccf12f3638e.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/6be329ff166d929f1f856fd6b1fbc269.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/960bcf6809b996aded23ac0a19987813.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/d0463c7904b6b8f52c1ec2568c6119f0.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/d9f8b67a05ced236446eefe1e849d6a0.jpg" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/patch-billboard-1-1920.avif" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/patch-billboard-4-1920.avif" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
+                <div className="gp-item" style={{flexShrink:0,display:"flex",justifyContent:"center",alignItems:"flex-end",height:"100%"}}><img className="gp" data-src="img/patch-swatch-1407.avif" style={{height:"75vh",width:"0.1px",opacity:0}} /></div>
               </div>
+            </div>
           </div>
         </div>
       </section>
@@ -510,7 +511,7 @@ function App() {
             <div className="lg:w-[78%]" style={{marginTop:"35px"}}>
               <div className="horizontal-scroll pb-4">
                 {works.map((work) => (
-                  <div key={work.title} className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{ width: "240px", height: "320px", flexShrink: 0 }} onClick={() => setModalItem({tag:work.tag,title:work.title,desc:work.desc,gradient:work.gradient})}>
+                  <div key={work.title} className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{ width: "240px", height: "320px", flexShrink: 0 }}>
                     <div className="absolute inset-0" style={{background: work.gradient}} />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                     <div className="absolute inset-0 flex flex-col justify-end p-5">
@@ -642,22 +643,17 @@ function App() {
 
             
       {modalItem && (
-        <div
-          onClick={() => setModalItem(false)}
-          style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.85)",display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}}
-        >
-          <div onClick={(e) => e.stopPropagation()} style={{width:"1200px",height:"700px",background:"#111",display:"flex",overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.5)",position:"relative"}}>
-            <div style={{flex:"0 0 525px",position:"relative",overflow:"hidden"}}>
-              <div style={{position:"absolute",inset:0,background:modalItem.gradient}} />
-              <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.05) 50%,transparent 100%)"}} />
+        <div className="modal-overlay" onClick={closeModal}>
+          <button className="modal-close" onClick={closeModal}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+          </button>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-image" style={{background: modalItem.gradient + ", url(https://picsum.photos/seed/" + modalItem.title.toLowerCase().replace(/\s+/g, "") + "/600/500), #222"}} />
+            <div className="modal-text">
+              <span className="tag">{modalItem.tag}</span>
+              <h2>{modalItem.title}</h2>
+              <p>{modalItem.desc}</p>
             </div>
-            <div style={{flex:"1",padding:"48px 44px",display:"flex",flexDirection:"column",justifyContent:"center",color:"#fff"}}>
-              <span style={{display:"inline-block",width:"fit-content",fontSize:"10px",fontWeight:"600",letterSpacing:"2px",color:"rgba(255,255,255,0.7)",background:"rgba(255,255,255,0.1)",padding:"4px 12px",marginBottom:"20px"}}>{modalItem.tag}</span>
-              <h3 style={{fontSize:"28px",fontWeight:"700",marginBottom:"16px",lineHeight:"1.2"}}>{modalItem.title}</h3>
-              <p style={{fontSize:"15px",lineHeight:"1.8",color:"rgba(255,255,255,0.6)",marginBottom:"28px"}}>{modalItem.desc}</p>
-              <div style={{width:"32px",height:"3px",background:"rgba(255,255,255,0.2)"}} />
-            </div>
-            <button onClick={() => setModalItem(false)} style={{position:"absolute",top:"16px",right:"18px",width:"36px",height:"36px",display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(255,255,255,0.08)",border:"none",color:"#fff",fontSize:"18px",cursor:"pointer",zIndex:10}}>&#x2715;</button>
           </div>
         </div>
       )}
@@ -900,170 +896,40 @@ gsap.registerPlugin(ScrollTrigger);
 
 
 <script>function resizePoster() {
-            const canvas = document.getElementById("poster-canvas");
-            if (!canvas) return;
-            const parent = canvas.parentElement;
-            if (!parent) return;
+            const canvas = document.getElementById('poster-canvas');
             const targetWidth = 1920;
             const targetHeight = 1080;
-            const containerWidth = parent.clientWidth;
-            const scale = Math.min(1, containerWidth / targetWidth);
-            canvas.style.transform = "translate(-50%, -50%) scale(" + scale + ")";
+            
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            const scaleX = windowWidth / targetWidth;
+            const scaleY = windowHeight / targetHeight;
+            const scale = Math.min(scaleX, scaleY);
+            
+            canvas.style.transform = `translate(-50%, -50%) scale(${scale})`;
         }
 
-        window.addEventListener("resize", resizePoster);
-        </script>
-
-<script>
-(function() {
-  var timer = setInterval(function() {
-    var target = document.getElementById('poster-target');
-    var template = document.getElementById('poster-template');
-    if (target && template) {
-      clearInterval(timer);
-      var poster = document.createElement('div');
-      poster.innerHTML = template.innerHTML;
-      target.parentNode.replaceChild(poster.firstElementChild, target);
-      template.remove();
-      // Trigger resize after insertion
-      if (typeof resizePoster === 'function') { setTimeout(resizePoster, 100); }
-    }
-  }, 50);
-  // Stop checking after 10 seconds
-  setTimeout(function() { clearInterval(timer); }, 10000);
-})();
-</script>
+        window.addEventListener('resize', resizePoster);
+        window.addEventListener('DOMContentLoaded', resizePoster);</script>
 
 
-<!-- Poster template (hidden, inserted after hero by JS) -->
-<template id="poster-template"><section class="w-full bg-black" style="height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center">
-        <div style="width:100%;max-width:1920px;position:relative">
-          <div style="width:100%;padding-top:56.25%"></div>
-<div id="poster-canvas">
-        
-        <div id="img-athlete" class="image-placeholder"><img src="src-p2/微信图片_2026-07-04_082136_782.jpg" alt="athlete"></div>
-        <div id="title-cooperation" class="title-cn">协作</div>
-        <div id="desc-cooperation" class="desc-text">是非成败转头空，青山依旧在，惯看秋月春风。一壶浊酒喜相逢，古今多少事，滚滚长江东逝水。</div>
-        <div id="title-collaboration" class="title-en">COLLABORATION</div>
-
-        <div id="title-care" class="title-en">CARE</div>
-        <div id="title-efficiency" class="title-cn">效率</div>
-        <div id="desc-efficiency" class="desc-text">滚滚长江东逝水，浪花淘尽英雄。是非成败转头空，青山依旧在，几度夕阳红。白发渔樵江渚上。</div>
-
-        <div id="img-boxing" class="image-placeholder"><img src="src-p2/356a70775848962b6ccf4ccf12f3638e.jpg" alt="boxing"></div>
-        <div id="img-trail-shoe" class="image-placeholder"><img src="src-p2/微信图片_2026-07-04_082149_589.jpg" alt="trail shoe"></div>
-
-
-        <div id="img-hanging-shoe" class="image-placeholder"><video src="src-p2/春.mp4" muted loop playsinline preload="auto"></video></div>
-        
-        <div id="title-creativity" class="title-en">CREATIVITY</div>
-        <div id="title-creation-cn" class="title-cn">创造</div>
-        <div id="desc-creation" class="desc-text">是非成败转头空，青山依旧在，惯看秋月春风。一壶浊酒喜相逢，古今多少事。</div>
-        
-        <div id="title-comfort" class="title-en">COMFORT</div>
-        <div id="img-football" class="image-placeholder"><img src="src-p2/patch-billboard-1-1920.avif" alt="football"></div>
-
-
-        <div id="title-convenience" class="title-en">CONVENIENCE</div>
-        <div id="title-convenience-cn" class="title-cn">便利</div>
-        <div id="desc-hanging-shoe" class="desc-text">是非成败转头空，青山依旧在，惯看秋月春风。一壶浊酒喜相逢，古今多少事，滚滚长江东逝水。</div>
-        <div id="title-intelligence" class="title-cn">智能</div>
-        <div id="desc-football" class="desc-text">滚滚长江东逝水，浪花淘尽英雄。是非成败转头空，青山依旧在，几度夕阳红。</div>
-
-    </div>
-        </div>
-      </section></template>
- 
-<style>
-        /* Pin-spacer must be black to match poster background */
-        .pin-spacer {
-            background: #000 !important;
+<script>function resizePoster() {
+            const canvas = document.getElementById('poster-canvas');
+            const targetWidth = 1920;
+            const targetHeight = 1080;
+            
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            const scaleX = windowWidth / targetWidth;
+            const scaleY = windowHeight / targetHeight;
+            const scale = Math.min(scaleX, scaleY);
+            
+            canvas.style.transform = `translate(-50%, -50%) scale(${scale})`;
         }
-        .poster-section {
-            background: #000 !important;
-        }
-</style>
 
-<script>
-(function() {
-  var check = setInterval(function() {
-    var canvas = document.getElementById("poster-canvas");
-    if (!canvas) return;
-    clearInterval(check);
-    var items = Array.from(canvas.querySelectorAll(".image-placeholder, .title-en, .title-cn, .desc-text"));
-    if (items.length === 0) return;
-    var section = canvas.closest("section");
-    if (!section) return;
-    // 1. Scatter all elements to random positions
-    items.forEach(function(el) {
-      var angle = Math.random() * Math.PI * 2;
-      var dist = 60 + Math.random() * 140;
-      gsap.set(el, {
-        opacity: 0,
-        x: Math.cos(angle) * dist,
-        y: Math.sin(angle) * dist,
-        scale: 0.75 + Math.random() * 0.5,
-        filter: "blur(" + (5 + Math.random() * 10) + "px)"
-      });
-    });
-    // 2. Fisher-Yates shuffle for random order
-    var shuffled = items.slice();
-    for (var i = shuffled.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var tmp = shuffled[i];
-      shuffled[i] = shuffled[j];
-      shuffled[j] = tmp;
-    }
-    // 3. Pin poster section: black -> reveal -> lock for viewing -> continue
-    // - pin ScrollTrigger starts at "top top": section fills viewport when pinned
-    // - element animation ScrollTrigger starts at "top 50%": elements reveal when half visible
-    // - elements spread across 0%-35% of 200vh timeline (reveal phase)
-    // - 35%-100% timeline: all elements visible, user views poster (view phase)
-    // - end: unpin after 200% viewport height of scroll
-    // - scrub: 0.5 smooths the scroll-driven animation
-    ScrollTrigger.create({
-      trigger: section,
-      start: "top top",
-      end: "+=200%",
-      pin: true,
-      pinSpacing: true,
-      anticipatePin: 1,
-      onEnter: function() {
-        var video = document.querySelector('#img-hanging-shoe video');
-        if (video && video.paused) {
-          setTimeout(function() { video.play(); }, 1500);
-        }
-      }
-    });
-    // Element reveal timeline (starts earlier at "top 50%")
-    var tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: "top 50%",
-        end: "+=200%",
-        scrub: 0.5
-      }
-    });
-    shuffled.forEach(function(el, idx) {
-      var startPos = idx / shuffled.length * 0.35;
-      tl.to(el, {
-        opacity: 1,
-        x: 0,
-        y: 0,
-        scale: 1,
-        filter: "blur(0px)",
-        duration: 0.25,
-        ease: "power2.out"
-      }, startPos);
-    });
-    // Ensure section bg is always black
-    section.style.background = "#000";
-    section.style.backgroundColor = "#000";
-    ScrollTrigger.refresh();
-  }, 100);
-  setTimeout(function() { clearInterval(check); }, 15000);
-})();
-</script>
- 
+        window.addEventListener('resize', resizePoster);
+        window.addEventListener('DOMContentLoaded', resizePoster);</script>
 </body>
 </html>

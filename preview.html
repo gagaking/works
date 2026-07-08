@@ -327,7 +327,7 @@ var methodologyCards=(_a&&_a.methodologyCards&&_a.methodologyCards.length)?_a.me
 var skills=(_a&&_a.skills&&_a.skills.length)?_a.skills:_d.skills;
 var impacts=(_a&&_a.impacts&&_a.impacts.length)?_a.impacts:_d.impacts;
 var services=(_a&&_a.services)?_a.services:_d.services;
-var _dHome={brandName:'Lithos',heroTitle1:'Layers hold',heroTitle2:'tales of time',heroDescLeft:'Every layer of sediment records a chapter of our planet, from ancient seabeds to drifting ash, layered across millions of years beneath us.',heroDescRight:'Our interactive maps let you peel back the crust to trace how stones, fossils, and deep time combine to shape the ground beneath your feet.',heroButtonText:'Start Digging',bgImage1:'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_195923_b0ba8ace-1d1d-4f2c-9a28-1ab84b330680.png&w=1280&q=85',bgImage2:'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_201152_bba90a12-bf12-459f-91f0-51f237dbaf3b.png&w=1280&q=85',sectionAiSystemsEn:'AI Systems',sectionAiSystemsCn:'AI Systems',sectionDesignWorksEn:'Design Works',sectionDesignWorksCn:'Crafted Experiences',sectionServicesEn:'Services',sectionServicesCn:'AI Systems',sectionMethodologyEn:'Methodology',sectionMethodologyCn:'我的方法论',sectionAboutEn:'About Me',sectionAboutCn:'关于我',aboutBio:'专注于 AI 视觉与设计的融合，擅长将 AI 技术应用于商业设计场景，构建高效的视觉生产系统。拥有丰富的品牌视觉设计经验与 AI 工具开发经验，致力于用设计与技术创造更大价值。',footerTagline1:"Let's Build",footerTaglineHighlight:'Scalable',footerTagline2:' Creativity.',footerCopyright:'© 2024 All rights reserved.',footerButtonText:'Get In Touch'};
+var _dHome={brandName:'Lithos',heroTitle1:'AI Visual',heroTitle2:'System Designer',heroDescLeft:'Every layer of sediment records a chapter of our planet, from ancient seabeds to drifting ash, layered across millions of years beneath us.',heroDescRight:'Our interactive maps let you peel back the crust to trace how stones, fossils, and deep time combine to shape the ground beneath your feet.',heroButtonText:'Start Digging',bgImage1:'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_195923_b0ba8ace-1d1d-4f2c-9a28-1ab84b330680.png&w=1280&q=85',bgImage2:'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_201152_bba90a12-bf12-459f-91f0-51f237dbaf3b.png&w=1280&q=85',sectionAiSystemsEn:'AI Systems',sectionAiSystemsCn:'AI 智能系统',sectionDesignWorksEn:'Design Works',sectionDesignWorksCn:'设计作品',sectionServicesEn:'Services',sectionServicesCn:'智能服务',sectionMethodologyEn:'Methodology',sectionMethodologyCn:'我的方法论',sectionAboutEn:'About Me',sectionAboutCn:'关于我',aboutBio:'专注于 AI 视觉与设计的融合，擅长将 AI 技术应用于商业设计场景，构建高效的视觉生产系统。拥有丰富的品牌视觉设计经验与 AI 工具开发经验，致力于用设计与技术创造更大价值。',footerTagline1:"Let's Build",footerTaglineHighlight:'Scalable',footerTagline2:' Creativity.',footerCopyright:'© 2024 All rights reserved.',footerButtonText:'联系我'};
 var _dNav=[{label:'HOME',target:'hero'},{label:'AI SYSTEMS',target:'ai-systems'},{label:'DESIGN WORKS',target:'design-works'},{label:'SERVICES',target:'services'},{label:'METHODOLOGY',target:'methodology'},{label:'ABOUT',target:'about'}];
 var _home=(_a&&_a.home)?_a.home:null;
 var home=_home||_dHome;
@@ -389,6 +389,7 @@ function App() {
   const [cursorPos, setCursorPos] = useState({ x: -999, y: -999 });
   const [scrolled, setScrolled] = useState(false);
   const [modalItem, setModalItem] = useState(null);
+  const [showContactImage, setShowContactImage] = useState(false);
 
   const animate = useCallback(() => {
     smooth.current.x += (mouse.current.x - smooth.current.x) * 0.1;
@@ -643,7 +644,7 @@ function App() {
           <div className="flex items-center gap-6">
             <span className="text-white/40 text-xs">{home.footerCopyright}</span>
             <span className="text-white/20 text-xs ml-4">v1.0.0</span>
-            <button className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium px-6 py-2.5 transition-colors">
+            <button onClick={() => setShowContactImage(true)} className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium px-6 py-2.5 transition-colors">
               {home.footerButtonText}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </button>
@@ -669,6 +670,19 @@ function App() {
               <div style={{width:"32px",height:"3px",background:"rgba(255,255,255,0.2)"}} />
             </div>
             <button onClick={() => setModalItem(false)} style={{position:"absolute",top:"16px",right:"18px",width:"36px",height:"36px",display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(255,255,255,0.08)",border:"none",color:"#fff",fontSize:"18px",cursor:"pointer",zIndex:10}}>&#x2715;</button>
+          </div>
+        </div>
+      )}
+
+      {/* Contact image modal - placeholder for now */}
+      {showContactImage && (
+        <div
+          onClick={() => setShowContactImage(false)}
+          style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.85)",display:"flex",alignItems:"center",justifyContent:"center"}}
+        >
+          <div onClick={(e) => e.stopPropagation()} style={{width:"60%",maxWidth:"800px",background:"#222",display:"flex",alignItems:"center",justifyContent:"center",minHeight:"400px",position:"relative"}}>
+            <span style={{color:"rgba(255,255,255,0.3)",fontSize:"14px"}}>{"图片待配置"}</span>
+            <button onClick={() => setShowContactImage(false)} style={{position:"absolute",top:"12px",right:"14px",color:"#fff",fontSize:"20px",background:"none",border:"none",cursor:"pointer",zIndex:10}}>&#x2715;</button>
           </div>
         </div>
       )}

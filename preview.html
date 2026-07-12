@@ -26,10 +26,10 @@ tailwind.config = { theme: { extend: { fontFamily: { playfair: ['Playfair Displa
 .horizontal-scroll::-webkit-scrollbar{display:none}
 .font-cn{font-family:'Noto Sans SC','Inter',sans-serif}.font-cn-serif{font-family:'Noto Serif SC','Playfair Display',serif}.horizontal-scroll>*{flex-shrink:0}
 
-.hero-carousel{position:absolute;bottom:100px;left:5%;width:90%;height:225px;z-index:40;overflow:hidden;pointer-events:auto}
+       .hero-carousel{position:absolute;bottom:100px;left:5%;width:90%;height:180px;z-index:40;overflow:hidden;pointer-events:auto}
 .hero-carousel-inner{display:flex;height:100%;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
 .hero-carousel-inner::-webkit-scrollbar{display:none}
-.hero-carousel-item{width:300px;height:225px;flex-shrink:0;overflow:hidden;position:relative;cursor:pointer;margin-right:8px}
+       .hero-carousel-item{width:300px;height:180px;flex-shrink:0;overflow:hidden;position:relative;cursor:pointer;margin-right:8px}
 
 .hero-carousel-item img{width:100%;height:100%;object-fit:cover}
 
@@ -447,14 +447,11 @@ function App() {
 
         <div className="hero-carousel">
           <div id="heroCarousel" className="hero-carousel-inner">
-            <div className="hero-carousel-item"><img src="img/356a70775848962b6ccf4ccf12f3638e.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/6be329ff166d929f1f856fd6b1fbc269.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/d9f8b67a05ced236446eefe1e849d6a0.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/960bcf6809b996aded23ac0a19987813.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/d0463c7904b6b8f52c1ec2568c6119f0.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/patch-billboard-1-1920.avif" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/patch-billboard-4-1920.avif" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/patch-swatch-1407.avif" alt="" /></div>
+            <div className="hero-carousel-item"><img src="img/hero/批量1.jpg" alt="" /></div>
+            <div className="hero-carousel-item"><img src="img/hero/批量2.jpg" alt="" /></div>
+            <div className="hero-carousel-item"><img src="img/hero/提示词.jpg" alt="" /></div>
+            <div className="hero-carousel-item"><img src="img/hero/画廊.jpg" alt="" /></div>
+            <div className="hero-carousel-item"><img src="img/hero/画廊2.jpg" alt="" /></div>
           </div>
         </div>
 
@@ -711,26 +708,35 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
     // All items stay at 300px (CSS default)
     _el.addEventListener("mouseenter", function() { _paused = true; });
     _el.addEventListener("mouseleave", function() { _paused = false; });
-        // GSAP breakthrough hover effect
+        // GSAP breakthrough hover effect — track hover count for parent overflow
+    var _hoverCount = 0;
     Array.from(_el.children).forEach(function(item) {
       item.style.transformOrigin = "center center";
       item.addEventListener("mouseenter", function() {
-        // Break out of container bounds and overlap neighbors
-        this.style.overflow = "visible";
-        this.style.zIndex = "10";
+        var self = this;
+        // Kill any lingering tweens on this item before starting fresh
+        gsap.killTweensOf(self);
+        var img = self.querySelector("img");
+        var labelSpan = self.querySelector(".label span");
+        if (img) gsap.killTweensOf(img);
+        if (labelSpan) gsap.killTweensOf(labelSpan);
+        // Reset overflow/position before animation to avoid stacking issues
+        self.style.overflow = "visible";
+        self.style.zIndex = "10";
+        _hoverCount++;
         var carousel = document.querySelector(".hero-carousel");
         var inner = document.getElementById("heroCarousel");
         if (carousel) carousel.style.overflow = "visible";
         if (inner) inner.style.overflow = "visible";
+        // Remove any leftover overlay from interrupted mouseleave
+        var oldOv = self.querySelector("div[style*='radial-gradient']");
+        if (oldOv) oldOv.remove();
         // Light burst overlay
         var overlay = document.createElement("div");
         overlay.style.cssText = "position:absolute;inset:0;background:radial-gradient(circle at center, rgba(255,255,255,0.35) 0%, transparent 70%);z-index:5;pointer-events:none;opacity:0;border-radius:inherit;";
-        this.appendChild(overlay);
-        var img = this.querySelector("img");
-        var labelSpan = this.querySelector(".label span");
+        self.appendChild(overlay);
         var tl = gsap.timeline({ defaults: { ease: "power2.out" }, onComplete: function() { if (overlay.parentNode) overlay.remove(); } });
-        // Larger scale to break out - overlaps adjacent items
-        tl.to(this, { scale: 1.4, duration: 0.5, ease: "back.out(2.5)" }, 0);
+        tl.to(self, { scale: 1.4, duration: 0.5, ease: "back.out(2.5)" }, 0);
         tl.to(overlay, { opacity: 0.7, duration: 0.1 }, 0);
         tl.to(overlay, { opacity: 0, duration: 0.35 }, 0.1);
         if (img) tl.to(img, { scale: 1.08, duration: 0.55 }, 0.05);
@@ -738,25 +744,42 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
           gsap.set(labelSpan, { y: 24, opacity: 0, filter: "blur(6px)", willChange: "transform, opacity, filter" });
           tl.to(labelSpan, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.4 }, 0.15);
         }
-        // Outer glow shadow for depth
-        tl.to(this, { boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(96,165,250,0.3)", duration: 0.3 }, 0);
+        tl.to(self, { boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(96,165,250,0.3)", duration: 0.3 }, 0);
       });
       item.addEventListener("mouseleave", function() {
-        this.style.overflow = "";
-        this.style.zIndex = "";
-        var carousel = document.querySelector(".hero-carousel");
-        var inner = document.getElementById("heroCarousel");
-        if (carousel) carousel.style.overflow = "";
-        if (inner) inner.style.overflow = "";
-        gsap.to(this, { scale: 1, duration: 0.4, ease: "power2.inOut", boxShadow: "0 0 0 rgba(0,0,0,0)" });
-        var img = this.querySelector("img");
+        var self = this;
+        // Kill all GSAP tweens to prevent animation pileup
+        gsap.killTweensOf(self);
+        var img = self.querySelector("img");
+        var labelSpan = self.querySelector(".label span");
+        if (img) gsap.killTweensOf(img);
+        if (labelSpan) gsap.killTweensOf(labelSpan);
+        // Remove any lingering overlay
+        var overlay = self.querySelector("div[style*='radial-gradient']");
+        if (overlay) overlay.remove();
+        _hoverCount = Math.max(0, _hoverCount - 1);
+        // Animate back to normal, then reset overflow after scale finishes
+        gsap.to(self, {
+          scale: 1,
+          duration: 0.4,
+          ease: "power2.inOut",
+          boxShadow: "0 0 0 rgba(0,0,0,0)",
+          onComplete: function() {
+            self.style.overflow = "";
+            self.style.zIndex = "";
+            if (_hoverCount <= 0) {
+              var carousel = document.querySelector(".hero-carousel");
+              var inner = document.getElementById("heroCarousel");
+              if (carousel) carousel.style.overflow = "";
+              if (inner) inner.style.overflow = "";
+            }
+          }
+        });
         if (img) gsap.to(img, { scale: 1, duration: 0.4 });
-        var labelSpan = this.querySelector(".label span");
         if (labelSpan) {
           gsap.set(labelSpan, { clearProps: "y,opacity,filter,willChange" });
         }
       });
-      // Also reset parent overflow when non-hovered
     });
     // Click to view large image
     Array.from(_el.children).forEach(function(item) {
@@ -796,8 +819,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
     if (!_el || _paused) return;
     var hw = _el.scrollWidth - _el.clientWidth;
     if (hw <= 0) return;
-    var half = hw / 2;
-    if (_el.scrollLeft >= half) { _el.scrollLeft = 0; }
+    // Calculate where the clone set starts (original set total width including margin-right)
+    var itemW = _el.children[0].offsetWidth + 8;
+    var cnt = _el.children.length / 2;
+    var resetAt = Math.ceil(itemW * cnt);
+    if (_el.scrollLeft >= resetAt) { _el.scrollLeft = 0; }
     else { _el.scrollLeft += _speed; }
     // Update progress bar
     var bar = document.getElementById("designWorksBar");
@@ -986,7 +1012,7 @@ gsap.registerPlugin(ScrollTrigger);
         <div id="desc-creation" class="desc-text">AI辅助创意生成与视觉设计，支持多种风格探索与内容创作，快速迭代方案并提供智能建议，大幅提升设计效率与创新能力。</div>
         
         <div id="title-comfort" class="title-en">INTELLIGENCE</div>
-        <div id="img-football" class="image-placeholder"><img src="src-p2/patch-billboard-1-1920.avif" alt="football"></div>
+ <div id="img-football" class="image-placeholder"><img src="src-p2/3.jpg" alt="football"></div>
 
 
         <div id="title-convenience" class="title-en">CONVENIENCE</div>
@@ -1031,25 +1057,24 @@ gsap.registerPlugin(ScrollTrigger);
         filter: "blur(" + (5 + Math.random() * 10) + "px)"
       });
     });
-    // 2. Fisher-Yates shuffle for random order
+    // 2. Sort roughly by vertical position with random jitter for organic feel
     var shuffled = items.slice();
-    for (var i = shuffled.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var tmp = shuffled[i];
-      shuffled[i] = shuffled[j];
-      shuffled[j] = tmp;
-    }
+    shuffled.sort(function(a, b) {
+      // Larger jitter so nearby elements appear in random order
+      return (a.offsetTop + (Math.random() - 0.5) * 800) -
+             (b.offsetTop + (Math.random() - 0.5) * 800);
+    });
     // 3. Pin poster section: black -> reveal -> lock for viewing -> continue
     // - pin ScrollTrigger starts at "top top": section fills viewport when pinned
     // - element animation ScrollTrigger starts at "top 50%": elements reveal when half visible
-    // - elements spread across 0%-35% of 200vh timeline (reveal phase)
+    // - elements spread across 0%-35% of 130vh timeline (reveal phase)
     // - 35%-100% timeline: all elements visible, user views poster (view phase)
-    // - end: unpin after 200% viewport height of scroll
+    // - end: unpin after 130% viewport height of scroll
     // - scrub: 0.5 smooths the scroll-driven animation
     ScrollTrigger.create({
       trigger: section,
       start: "top top",
-      end: "+=200%",
+      end: "+=130%",
       pin: true,
       pinSpacing: true,
       anticipatePin: 1,
@@ -1064,8 +1089,8 @@ gsap.registerPlugin(ScrollTrigger);
     var tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        start: "top 50%",
-        end: "+=200%",
+        start: "top 85%",
+        end: "+=130%",
         scrub: 0.5
       }
     });

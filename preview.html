@@ -26,12 +26,14 @@ tailwind.config = { theme: { extend: { fontFamily: { playfair: ['Playfair Displa
 .horizontal-scroll::-webkit-scrollbar{display:none}
 .font-cn{font-family:'Noto Sans SC','Inter',sans-serif}.font-cn-serif{font-family:'Noto Serif SC','Playfair Display',serif}.horizontal-scroll>*{flex-shrink:0}
 
-       .hero-carousel{position:absolute;bottom:100px;left:5%;width:90%;height:180px;z-index:40;overflow:hidden;pointer-events:auto}
-.hero-carousel-inner{display:flex;height:100%;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
-.hero-carousel-inner::-webkit-scrollbar{display:none}
-       .hero-carousel-item{width:300px;height:180px;flex-shrink:0;overflow:hidden;position:relative;cursor:pointer;margin-right:8px}
+                
 
-.hero-carousel-item img{width:100%;height:100%;object-fit:cover}
+ .hero-slideshow{position:absolute;inset:0;z-index:15;overflow:hidden;pointer-events:none}
+.hero-slide{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;transition:opacity 1s cubic-bezier(0.16,1,0.3,1)}
+.carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:none;background:none;color:rgba(255,255,255,1);font-size:24px;cursor:pointer;opacity:1;transition:opacity 0.3s ease;user-select:none;padding:0}
+ .carousel-arrow:hover{opacity:1}
+ .carousel-arrow[data-dir="left"]{left:-44px}
+ .carousel-arrow[data-dir="right"]{right:-44px}
 
 
 .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease}
@@ -289,17 +291,6 @@ html, body {
 }</style>
 <script src="libs/gsap.min.js"></script>
 <script src="libs/ScrollTrigger.min.js"></script>
-</head>
-<body>
-<div id="loadingOverlay" style="position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.6s ease,visibility 0.6s ease">
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:32px">
-    <svg width="40" height="40" viewBox="0 0 256 256" fill="#fff"><path d="M256 256H128L0 128h128Z"/><path d="M256 128H128L0 0h128Z"/></svg>
-    <span style="color:#fff;font-size:28px;font-family:&quot;Playfair Display&quot;,serif;font-style:italic;letter-spacing:-0.03em">Lithos</span>
-  </div>
-  <div style="width:192px;height:2px;background:rgba(255,255,255,0.1);border-radius:999px;overflow:hidden">
-    <div id="loadingBar" style="height:100%;background:#fff;width:0%;border-radius:999px"></div>
-  </div>
-  <span id="loadingPct" style="margin-top:12px;color:rgba(255,255,255,0.4);font-size:12px;font-family:monospace;letter-spacing:2px">0%</span>
 </div>
 
 <div id="root"></div>
@@ -308,10 +299,6 @@ html, body {
 <script src="libs/babel.min.js"></script>
 <script type="text/babel" data-type="module">
 const { useState, useEffect, useRef, useCallback } = React;
-
-
-
-const SPOTLIGHT_R = 260;
 
 
 
@@ -333,31 +320,33 @@ var _home=(_a&&_a.home)?_a.home:null;
 var home=_home||_dHome;
 var navItems=(_a&&_a.nav&&_a.nav.length)?_a.nav:_dNav;
 var BG_IMAGE_1=home.bgImage1||'img/hero/背景.jpg';
-var BG_IMAGE_2=home.bgImage2||'img/hero/背景-2.jpg';
 
-
-function RevealLayer({ image, cursorX, cursorY }) {
+var BG_VIDEO = "img/hero/背景2.mp4";
+const SPOTLIGHT_R = 260;
+function RevealLayer({ video, cursorX, cursorY }) {
   const canvasRef = useRef(null);
   const maskRef = useRef(null);
   const draw = useCallback(() => {
-    const canvas = canvasRef.current;
+    var canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    var ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (cursorX < 0 || cursorY < 0) return;
-    const g = ctx.createRadialGradient(cursorX, cursorY, 0, cursorX, cursorY, SPOTLIGHT_R);
-    g.addColorStop(0, "rgba(255,255,255,1)");
-    g.addColorStop(0.4, "rgba(255,255,255,1)");
-    g.addColorStop(0.6, "rgba(255,255,255,0.75)");
-    g.addColorStop(0.75, "rgba(255,255,255,0.4)");
-    g.addColorStop(0.88, "rgba(255,255,255,0.12)");
-    g.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.arc(cursorX, cursorY, SPOTLIGHT_R, 0, Math.PI * 2);
-    ctx.fill();
-    const dataUrl = canvas.toDataURL();
+    if (cursorX < 0 || cursorY < 0) {
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } else {
+      var g = ctx.createRadialGradient(cursorX, cursorY, 0, cursorX, cursorY, SPOTLIGHT_R);
+      g.addColorStop(0, "rgba(255,255,255,1)");
+      g.addColorStop(0.4, "rgba(255,255,255,1)");
+      g.addColorStop(0.6, "rgba(255,255,255,0.75)");
+      g.addColorStop(0.75, "rgba(255,255,255,0.4)");
+      g.addColorStop(0.88, "rgba(255,255,255,0.12)");
+      g.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    var dataUrl = canvas.toDataURL();
     if (maskRef.current) {
       maskRef.current.style.maskImage = "url(" + dataUrl + ")";
       maskRef.current.style.webkitMaskImage = "url(" + dataUrl + ")";
@@ -374,38 +363,60 @@ function RevealLayer({ image, cursorX, cursorY }) {
     return () => window.removeEventListener("resize", resize);
   }, []);
   useEffect(() => { draw(); }, [draw]);
+  // Restart video on cursor move
+  useEffect(() => {
+    if (cursorX > 0 && cursorY > 0) {
+      const v = maskRef.current;
+      if (v && v.paused) {
+        v.currentTime = 0;
+        v.play().catch(function(){});
+      }
+    }
+  }, [cursorX, cursorY]);
   return (
     <>
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" style={{ display: "none" }} />
-      <div ref={maskRef} className="absolute inset-0 bg-center bg-cover bg-no-repeat pointer-events-none" style={{ zIndex: 30, backgroundImage: "url(" + image + ")" }} />
+      <video ref={maskRef} className="absolute inset-0 w-full h-full object-cover pointer-events-none" style={{ zIndex: 30, transform: "translateX(2%)" }} autoPlay muted playsInline>
+        <source src={video} type="video/mp4" />
+      </video>
     </>
   );
 }
 
 function App() {
+  const [scrolled, setScrolled] = useState(false);
+  const [modalItem, setModalItem] = useState(null);
+  const [showContactImage, setShowContactImage] = useState(false);
+  const heroImages = ["img/hero/批量1.png","img/hero/批量2.png","img/hero/提示词.png","img/hero/画廊0.png","img/hero/画廊2.png"];
+  const [heroIdx, setHeroIdx] = useState(0);
+  const prevHero = () => setHeroIdx(i => (i - 1 + heroImages.length) % heroImages.length);
   const mouse = useRef({ x: -999, y: -999 });
   const smooth = useRef({ x: -999, y: -999 });
   const rafRef = useRef(0);
   const [cursorPos, setCursorPos] = useState({ x: -999, y: -999 });
-  const [scrolled, setScrolled] = useState(false);
-  const [modalItem, setModalItem] = useState(null);
-  const [showContactImage, setShowContactImage] = useState(false);
-
   const animate = useCallback(() => {
     smooth.current.x += (mouse.current.x - smooth.current.x) * 0.1;
     smooth.current.y += (mouse.current.y - smooth.current.y) * 0.1;
     setCursorPos({ x: smooth.current.x, y: smooth.current.y });
     rafRef.current = requestAnimationFrame(animate);
   }, []);
+
+  const nextHero = () => setHeroIdx(i => (i + 1) % heroImages.length);
+  // Auto-play carousel every 3.5 seconds
+  useEffect(function() {
+    var t = setInterval(function() { setHeroIdx(function(i) { return (i + 1) % heroImages.length; }); }, 3500);
+    return function() { clearInterval(t); };
+  }, []);
+
   useEffect(() => {
     const onMove = (e) => { mouse.current.x = e.clientX; mouse.current.y = e.clientY; };
     const onScroll = () => { setScrolled(window.scrollY > window.innerHeight * 0.8); };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("scroll", onScroll, { passive: true });
     rafRef.current = requestAnimationFrame(animate);
-    return () => { 
-      window.removeEventListener("mousemove", onMove); 
-      window.removeEventListener("scroll", onScroll); 
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("scroll", onScroll);
       cancelAnimationFrame(rafRef.current);
     };
   }, [animate]);
@@ -413,7 +424,6 @@ function App() {
   const openModal = (item) => { setModalItem(item); };
   const closeModal = () => { setModalItem(null); };
     // Carousel auto-scroll handled by standalone script below
-
 
   return (
     <div className="min-h-screen bg-white tracking-[-0.02em]" style={{ fontFamily: "'Inter','Noto Sans SC',sans-serif" }}>
@@ -436,7 +446,7 @@ function App() {
 
       <section id="hero" className="relative w-full overflow-hidden bg-black" style={{ height: "100dvh" }}>
         <div className="absolute inset-0 bg-center bg-cover bg-no-repeat hero-zoom" style={{ zIndex: 10, backgroundImage: "url(" + BG_IMAGE_1 + ")" }} />
-        <RevealLayer image={BG_IMAGE_2} cursorX={cursorPos.x} cursorY={cursorPos.y} />
+        <RevealLayer video={BG_VIDEO} cursorX={cursorPos.x} cursorY={cursorPos.y} />
         <div className="absolute top-[14%] left-0 right-0 flex flex-col items-center text-center px-5 pointer-events-none z-50">
           <h1 className="text-white leading-[0.95]">
             <span className="block font-playfair italic font-normal text-5xl sm:text-7xl md:text-8xl hero-anim hero-reveal" style={{ letterSpacing: "-0.05em", animationDelay: "0.25s" }}>{home.heroTitle1}</span>
@@ -445,17 +455,11 @@ function App() {
         </div>
       
 
-        <div className="hero-carousel">
-          <div id="heroCarousel" className="hero-carousel-inner">
-            <div className="hero-carousel-item"><img src="img/hero/批量1.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/hero/批量2.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/hero/提示词.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/hero/画廊.jpg" alt="" /></div>
-            <div className="hero-carousel-item"><img src="img/hero/画廊2.jpg" alt="" /></div>
-          </div>
+        <div className="hero-slideshow">
+          {heroImages.map((src, i) => (
+            <div key={i} className="hero-slide" style={{ backgroundImage: "url(" + src + ")", opacity: i === heroIdx ? 1 : 0, zIndex: i === heroIdx ? 2 : 1 }} />
+          ))}
         </div>
-
-        
         </section>
 
       
@@ -468,41 +472,25 @@ function App() {
           </div>
                     <div className="w-full flex flex-col gap-8">
                             <div className="flex gap-5" style={{flexWrap:"nowrap"}}>
-                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}} onClick={() => setModalItem({tag:"AI",title:"Intelligent Assistant",desc:"Deep learning model for natural language understanding",gradient:"linear-gradient(135deg,#0c1445 0%,#1a237e 50%,#283593 100%)"})}>
-                  <div className="absolute inset-0" style={{background:"linear-gradient(135deg,#0c1445 0%,#1a237e 50%,#283593 100%)"}} />
+                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}}>
+ <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage:"url('img/systems/1.jpg')"}} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute inset-0 flex flex-col justify-end p-5">
-                    <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 mb-3">AI</span>
-                    <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">Intelligent Assistant</h3>
-                    <p className="text-white/60 text-xs leading-relaxed mb-3">Deep learning model for natural language understanding</p>
-                  </div>
+                  
                 </div>
-                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}} onClick={() => setModalItem({tag:"CV",title:"Computer Vision",desc:"Real-time object detection and image segmentation",gradient:"linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)"})}>
-                  <div className="absolute inset-0" style={{background:"linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)"}} />
+                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}}>
+ <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage:"url('img/systems/2.jpg')"}} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute inset-0 flex flex-col justify-end p-5">
-                    <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 mb-3">CV</span>
-                    <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">Computer Vision</h3>
-                    <p className="text-white/60 text-xs leading-relaxed mb-3">Real-time object detection and image segmentation</p>
-                  </div>
+                  
                 </div>
-                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}} onClick={() => setModalItem({tag:"NLP",title:"Text Analytics",desc:"Sentiment analysis and multilingual translation",gradient:"linear-gradient(135deg,#3e065f 0%,#700b97 50%,#a125e8 100%)"})}>
-                  <div className="absolute inset-0" style={{background:"linear-gradient(135deg,#3e065f 0%,#700b97 50%,#a125e8 100%)"}} />
+                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}}>
+ <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage:"url('img/systems/3.jpg')"}} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute inset-0 flex flex-col justify-end p-5">
-                    <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 mb-3">NLP</span>
-                    <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">Text Analytics</h3>
-                    <p className="text-white/60 text-xs leading-relaxed mb-3">Sentiment analysis and multilingual translation</p>
-                  </div>
+                  
                 </div>
-                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}} onClick={() => setModalItem({tag:"ML",title:"Predictive Models",desc:"Time series forecasting and anomaly detection",gradient:"linear-gradient(135deg,#0b3d0b 0%,#1b5e20 50%,#388e3c 100%)"})}>
-                  <div className="absolute inset-0" style={{background:"linear-gradient(135deg,#0b3d0b 0%,#1b5e20 50%,#388e3c 100%)"}} />
+                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}}>
+ <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage:"url('img/systems/4.jpg')"}} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute inset-0 flex flex-col justify-end p-5">
-                    <span className="inline-block w-fit text-[10px] font-medium tracking-wider text-white/70 bg-white/[0.15] backdrop-blur-sm px-2.5 py-1 mb-3">ML</span>
-                    <h3 className="text-white text-sm font-semibold tracking-wide mb-1.5">Predictive Models</h3>
-                    <p className="text-white/60 text-xs leading-relaxed mb-3">Time series forecasting and anomaly detection</p>
-                  </div>
+                  
                 </div>
               </div>
           </div>
@@ -693,102 +681,16 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 
 <script>
 (function() {
-  var _el = null, _paused = false, _speed = 0.8;
   function init() {
-    _el = document.getElementById("heroCarousel");
+    var _el = document.getElementById("heroCarousel");
     if (!_el || !_el.children || _el.children.length === 0) { setTimeout(init, 300); return; }
-    // Clone items for seamless infinite loop (all 300px base)
-    if (!_el.dataset.cloned) {
-      var cnt = _el.children.length;
-      for (var i = 0; i < cnt; i++) {
-        _el.appendChild(_el.children[i].cloneNode(true));
-      }
-      _el.dataset.cloned = "1";
-    }
-    // All items stay at 300px (CSS default)
-    _el.addEventListener("mouseenter", function() { _paused = true; });
-    _el.addEventListener("mouseleave", function() { _paused = false; });
-        // GSAP breakthrough hover effect — track hover count for parent overflow
-    var _hoverCount = 0;
-    Array.from(_el.children).forEach(function(item) {
-      item.style.transformOrigin = "center center";
-      item.addEventListener("mouseenter", function() {
-        var self = this;
-        // Kill any lingering tweens on this item before starting fresh
-        gsap.killTweensOf(self);
-        var img = self.querySelector("img");
-        var labelSpan = self.querySelector(".label span");
-        if (img) gsap.killTweensOf(img);
-        if (labelSpan) gsap.killTweensOf(labelSpan);
-        // Reset overflow/position before animation to avoid stacking issues
-        self.style.overflow = "visible";
-        self.style.zIndex = "10";
-        _hoverCount++;
-        var carousel = document.querySelector(".hero-carousel");
-        var inner = document.getElementById("heroCarousel");
-        if (carousel) carousel.style.overflow = "visible";
-        if (inner) inner.style.overflow = "visible";
-        // Remove any leftover overlay from interrupted mouseleave
-        var oldOv = self.querySelector("div[style*='radial-gradient']");
-        if (oldOv) oldOv.remove();
-        // Light burst overlay
-        var overlay = document.createElement("div");
-        overlay.style.cssText = "position:absolute;inset:0;background:radial-gradient(circle at center, rgba(255,255,255,0.35) 0%, transparent 70%);z-index:5;pointer-events:none;opacity:0;border-radius:inherit;";
-        self.appendChild(overlay);
-        var tl = gsap.timeline({ defaults: { ease: "power2.out" }, onComplete: function() { if (overlay.parentNode) overlay.remove(); } });
-        tl.to(self, { scale: 1.4, duration: 0.5, ease: "back.out(2.5)" }, 0);
-        tl.to(overlay, { opacity: 0.7, duration: 0.1 }, 0);
-        tl.to(overlay, { opacity: 0, duration: 0.35 }, 0.1);
-        if (img) tl.to(img, { scale: 1.08, duration: 0.55 }, 0.05);
-        if (labelSpan) {
-          gsap.set(labelSpan, { y: 24, opacity: 0, filter: "blur(6px)", willChange: "transform, opacity, filter" });
-          tl.to(labelSpan, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.4 }, 0.15);
-        }
-        tl.to(self, { boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(96,165,250,0.3)", duration: 0.3 }, 0);
-      });
-      item.addEventListener("mouseleave", function() {
-        var self = this;
-        // Kill all GSAP tweens to prevent animation pileup
-        gsap.killTweensOf(self);
-        var img = self.querySelector("img");
-        var labelSpan = self.querySelector(".label span");
-        if (img) gsap.killTweensOf(img);
-        if (labelSpan) gsap.killTweensOf(labelSpan);
-        // Remove any lingering overlay
-        var overlay = self.querySelector("div[style*='radial-gradient']");
-        if (overlay) overlay.remove();
-        _hoverCount = Math.max(0, _hoverCount - 1);
-        // Animate back to normal, then reset overflow after scale finishes
-        gsap.to(self, {
-          scale: 1,
-          duration: 0.4,
-          ease: "power2.inOut",
-          boxShadow: "0 0 0 rgba(0,0,0,0)",
-          onComplete: function() {
-            self.style.overflow = "";
-            self.style.zIndex = "";
-            if (_hoverCount <= 0) {
-              var carousel = document.querySelector(".hero-carousel");
-              var inner = document.getElementById("heroCarousel");
-              if (carousel) carousel.style.overflow = "";
-              if (inner) inner.style.overflow = "";
-            }
-          }
-        });
-        if (img) gsap.to(img, { scale: 1, duration: 0.4 });
-        if (labelSpan) {
-          gsap.set(labelSpan, { clearProps: "y,opacity,filter,willChange" });
-        }
-      });
-    });
     // Click to view large image
-    Array.from(_el.children).forEach(function(item) {
+    Array.from(_el.querySelectorAll(".hero-carousel-item")).forEach(function(item) {
+      item.style.cursor = "pointer";
       item.addEventListener("click", function(e) {
         var imgEl = this.querySelector("img");
         if (!imgEl) return;
         var src = imgEl.getAttribute("src");
-        var label = this.querySelector(".label span");
-        var text = label ? label.textContent : "";
         // Create image lightbox overlay
         var ov = document.createElement("div");
         ov.style.cssText = "position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;cursor:pointer;animation:fadeIn 0.25s ease";
@@ -796,12 +698,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
         ci.src = src;
         ci.style.cssText = "max-width:85vw;max-height:80vh;object-fit:contain;box-shadow:0 30px 80px rgba(0,0,0,0.5);border-radius:0";
         ov.appendChild(ci);
-        if (text) {
-          var lb = document.createElement("div");
-          lb.textContent = text;
-          lb.style.cssText = "position:absolute;bottom:30px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.6);font-size:12px;letter-spacing:0.1em;font-weight:500";
-          ov.appendChild(lb);
-        }
         var cb = document.createElement("button");
         cb.innerHTML = "&times;";
         cb.style.cssText = "position:fixed;top:24px;right:28px;width:38px;height:38px;background:rgba(255,255,255,0.08);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10000;border-radius:0";
@@ -812,28 +708,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
         document.body.appendChild(ov);
       });
     });
-
-    setInterval(tick, 20);
-  }
-  function tick() {
-    if (!_el || _paused) return;
-    var hw = _el.scrollWidth - _el.clientWidth;
-    if (hw <= 0) return;
-    // Calculate where the clone set starts (original set total width including margin-right)
-    var itemW = _el.children[0].offsetWidth + 8;
-    var cnt = _el.children.length / 2;
-    var resetAt = Math.ceil(itemW * cnt);
-    if (_el.scrollLeft >= resetAt) { _el.scrollLeft = 0; }
-    else { _el.scrollLeft += _speed; }
-    // Update progress bar
-    var bar = document.getElementById("designWorksBar");
-    if (bar) { bar.style.width = ((_el.scrollLeft / hw) * 100) + "%"; }
   }
   if (document.readyState === "complete") { init(); }
   else { window.addEventListener("load", init); }
 })()
 </script>
-
 
 <script>
 (function() {
@@ -879,46 +758,17 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 <script>
 gsap.registerPlugin(ScrollTrigger);
 (function(){
-  var pct = 0;
-  var bar = document.getElementById("loadingBar");
-  var pctEl = document.getElementById("loadingPct");
-  var overlay = document.getElementById("loadingOverlay");
-  var int = setInterval(function(){
-    pct += 0.5 + Math.random() * 3;
-    if(pct >= 100){
-      pct = 100; clearInterval(int);
-      bar.style.width = "100%"; pctEl.textContent = "100%";
-      overlay.style.opacity = "0";
-      overlay.style.visibility = "hidden";
-      // After a short delay, animate hero with GSAP
-      setTimeout(function(){
-        var mm = gsap.matchMedia();
-        mm.add("(prefers-reduced-motion: no-preference)", function(){
-          var tl = gsap.timeline({defaults:{ease:"power3.out"}});
-          tl.fromTo(".hero-zoom", {scale:1.12}, {scale:1,duration:1.8,ease:"power2.out"}, 0);
-          tl.fromTo(document.querySelectorAll(".hero-reveal"), {y:28,autoAlpha:0,filter:"blur(12px)"}, {y:0,autoAlpha:1,filter:"blur(0px)",duration:1.1,stagger:0.17}, 0.1);
-          tl.fromTo(document.querySelectorAll(".hero-fade"), {y:20,autoAlpha:0}, {y:0,autoAlpha:1,duration:1,stagger:0.15}, 0.55);
-          
-        });
-        mm.add("(prefers-reduced-motion: reduce)", function(){
-          gsap.set([".hero-zoom",".hero-reveal",".hero-fade"], {clearProps:"all"});
-        });
-        // ScrollTrigger for section reveals
-        gsap.fromTo("#ai-systems .gsap-reveal", {y:40,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.8,ease:"power2.out",scrollTrigger:{trigger:"#ai-systems",start:"top 75%",toggleActions:"play none none reverse"}});
-        gsap.fromTo("#ai-systems .gsap-card", {y:60,autoAlpha:0,scale:0.95}, {y:0,autoAlpha:1,scale:1,duration:0.7,stagger:0.1,ease:"power2.out",scrollTrigger:{trigger:"#ai-systems",start:"top 70%",toggleActions:"play none none reverse"}});
-        gsap.fromTo("#design-works .gsap-reveal", {y:40,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.8,ease:"power2.out",scrollTrigger:{trigger:"#design-works",start:"top 75%",toggleActions:"play none none reverse"}});
-        gsap.fromTo("#methodology .gsap-reveal", {y:40,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.8,ease:"power2.out",scrollTrigger:{trigger:"#methodology",start:"top 75%",toggleActions:"play none none reverse"}});
-        gsap.fromTo("#methodology .gsap-card", {y:50,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.7,stagger:0.1,ease:"power2.out",scrollTrigger:{trigger:"#methodology",start:"top 70%",toggleActions:"play none none reverse"}});
-        gsap.fromTo("#about .gsap-reveal", {y:40,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.8,ease:"power2.out",scrollTrigger:{trigger:"#about",start:"top 75%",toggleActions:"play none none reverse"}});
-        gsap.fromTo("#about .skill-bar", {scaleX:0,transformOrigin:"left"}, {scaleX:1,duration:1.2,stagger:0.15,ease:"power2.out",scrollTrigger:{trigger:"#about",start:"top 70%",toggleActions:"play none none reverse"}});
-        ScrollTrigger.refresh();
-      }, 100);
-      return;
-    }
-    bar.style.width = pct + "%";
-    pctEl.textContent = Math.round(pct) + "%";
-  }, 25);
+  // ScrollTrigger for section reveals
+  gsap.fromTo("#ai-systems .gsap-reveal", {y:40,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.8,ease:"power2.out",scrollTrigger:{trigger:"#ai-systems",start:"top 75%",toggleActions:"play none none reverse"}});
+  gsap.fromTo("#ai-systems .gsap-card", {y:60,autoAlpha:0,scale:0.95}, {y:0,autoAlpha:1,scale:1,duration:0.7,stagger:0.1,ease:"power2.out",scrollTrigger:{trigger:"#ai-systems",start:"top 70%",toggleActions:"play none none reverse"}});
+  gsap.fromTo("#design-works .gsap-reveal", {y:40,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.8,ease:"power2.out",scrollTrigger:{trigger:"#design-works",start:"top 75%",toggleActions:"play none none reverse"}});
+  gsap.fromTo("#methodology .gsap-reveal", {y:40,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.8,ease:"power2.out",scrollTrigger:{trigger:"#methodology",start:"top 75%",toggleActions:"play none none reverse"}});
+  gsap.fromTo("#methodology .gsap-card", {y:50,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.7,stagger:0.1,ease:"power2.out",scrollTrigger:{trigger:"#methodology",start:"top 70%",toggleActions:"play none none reverse"}});
+  gsap.fromTo("#about .gsap-reveal", {y:40,autoAlpha:0}, {y:0,autoAlpha:1,duration:0.8,ease:"power2.out",scrollTrigger:{trigger:"#about",start:"top 75%",toggleActions:"play none none reverse"}});
+  gsap.fromTo("#about .skill-bar", {scaleX:0,transformOrigin:"left"}, {scaleX:1,duration:1.2,stagger:0.15,ease:"power2.out",scrollTrigger:{trigger:"#about",start:"top 70%",toggleActions:"play none none reverse"}});
+  ScrollTrigger.refresh();
 })();
+
 </script>
 
 <script>
@@ -945,8 +795,6 @@ gsap.registerPlugin(ScrollTrigger);
   img.addEventListener("mouseleave", function() { lens.style.display = "none"; });
 })();
 </script>
-
-
 
 
 
@@ -985,7 +833,6 @@ gsap.registerPlugin(ScrollTrigger);
 })();
 </script>
 
-
 <!-- Poster template (hidden, inserted after hero by JS) -->
 <template id="poster-template"><section class="w-full bg-black" style="height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center">
         <div style="width:100%;max-width:1920px;position:relative">
@@ -1004,7 +851,6 @@ gsap.registerPlugin(ScrollTrigger);
         <div id="img-boxing" class="image-placeholder"><img src="src-p2/356a70775848962b6ccf4ccf12f3638e.jpg" alt="boxing"></div>
         <div id="img-trail-shoe" class="image-placeholder"><img src="src-p2/微信图片_2026-07-04_082149_589.jpg" alt="trail shoe"></div>
 
-
         <div id="img-hanging-shoe" class="image-placeholder"><video src="src-p2/春.mp4" muted loop playsinline preload="auto"></video></div>
         
         <div id="title-creativity" class="title-en">CREATIVITY</div>
@@ -1013,7 +859,6 @@ gsap.registerPlugin(ScrollTrigger);
         
         <div id="title-comfort" class="title-en">INTELLIGENCE</div>
  <div id="img-football" class="image-placeholder"><img src="src-p2/3.jpg" alt="football"></div>
-
 
         <div id="title-convenience" class="title-en">CONVENIENCE</div>
         <div id="title-convenience-cn" class="title-cn">便利</div>

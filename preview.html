@@ -315,7 +315,7 @@ var skills=(_a&&_a.skills&&_a.skills.length)?_a.skills:_d.skills;
 var impacts=(_a&&_a.impacts&&_a.impacts.length)?_a.impacts:_d.impacts;
 var services=(_a&&_a.services)?_a.services:_d.services;
 var _dHome={brandName:'Lithos',heroTitle1:'AI Visual',heroTitle2:'System Designer',heroDescLeft:'Every layer of sediment records a chapter of our planet, from ancient seabeds to drifting ash, layered across millions of years beneath us.',heroDescRight:'Our interactive maps let you peel back the crust to trace how stones, fossils, and deep time combine to shape the ground beneath your feet.',heroButtonText:'Start Digging',bgImage1:'img/hero/背景.jpg',bgImage2:'img/hero/背景-2.jpg',sectionAiSystemsEn:'AI Systems',sectionAiSystemsCn:'AI 智能系统',sectionDesignWorksEn:'Design Works',sectionDesignWorksCn:'设计作品',sectionServicesEn:'Services',sectionServicesCn:'智能服务',sectionMethodologyEn:'Methodology',sectionMethodologyCn:'我的方法论',sectionAboutEn:'About Me',sectionAboutCn:'关于我',aboutBio:'专注于 AI 视觉与设计的融合，擅长将 AI 技术应用于商业设计场景，构建高效的视觉生产系统。拥有丰富的品牌视觉设计经验与 AI 工具开发经验，致力于用设计与技术创造更大价值。',footerTagline1:"Let's Build",footerTaglineHighlight:'Scalable',footerTagline2:' Creativity.',footerCopyright:'© 2024 All rights reserved.',footerButtonText:'联系我'};
-var _dNav=[{label:'HOME',target:'hero'},{label:'AI SYSTEMS',target:'ai-systems'},{label:'DESIGN WORKS',target:'design-works'},{label:'SERVICES',target:'services'},{label:'METHODOLOGY',target:'methodology'},{label:'ABOUT',target:'about'}];
+var _dNav=[{label:'首页',target:'hero'},{label:'AI 智能系统',target:'ai-systems'},{label:'设计作品',target:'design-works'},{label:'智能服务',target:'services'},{label:'我的方法论',target:'methodology'},{label:'关于我',target:'about'}];
 var _home=(_a&&_a.home)?_a.home:null;
 var home=_home||_dHome;
 var navItems=(_a&&_a.nav&&_a.nav.length)?_a.nav:_dNav;
@@ -470,27 +470,19 @@ function App() {
           <div className="lg:w-[22%] flex-shrink-0">
             <h2 className="text-gray-900 text-4xl sm:text-5xl md:text-6xl font-normal leading-[1.05] tracking-[-0.03em]" style={{ marginTop: "clamp(40px, 6vw, 80px)" }}>{home.sectionAiSystemsEn}<br /><span className="font-playfair italic text-gray-500">{home.sectionAiSystemsCn}</span></h2>
           </div>
-                    <div className="w-full flex flex-col gap-8">
+                    <div className="w-full flex flex-col gap-8" style={{ marginTop: "clamp(40px, 6vw, 80px)" }}>
                             <div className="flex gap-5" style={{flexWrap:"nowrap"}}>
-                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}}>
+                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"240px",height:"320px",flexShrink:0}}>
  <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage:"url('img/systems/1.jpg')"}} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  
                 </div>
-                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}}>
+                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"240px",height:"320px",flexShrink:0}}>
  <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage:"url('img/systems/2.jpg')"}} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  
                 </div>
-                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}}>
+                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"240px",height:"320px",flexShrink:0}}>
  <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage:"url('img/systems/3.jpg')"}} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  
                 </div>
-                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"220px",height:"300px",flexShrink:0}}>
+                <div className="group relative overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 cursor-pointer bg-gray-50" style={{width:"240px",height:"320px",flexShrink:0}}>
  <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage:"url('img/systems/4.jpg')"}} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  
                 </div>
               </div>
           </div>
